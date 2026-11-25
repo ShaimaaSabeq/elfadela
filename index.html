@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elfadela Institute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F8F6; --surface:#FFFFFF; --ink:#17312B; --muted:#56706A;
+  --line:#DCE7E2; --primary:#0F6B57; --primary-soft:#E3F1EC; --gold:#C9A24B;
+  --hero:#0F6B57; --on-hero:#FFFFFF; --on-hero-muted:#CFE6DE;
+  --sidebar-w:264px;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1A17; --surface:#15231F; --ink:#E4EEEA; --muted:#9DB3AB;
+    --line:#253731; --primary:#5CC4A6; --primary-soft:#1A3A31; --gold:#D8B565;
+    --hero:#134A3E; --on-hero:#F2F8F5; --on-hero-muted:#A9CFC2;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1A17; --surface:#15231F; --ink:#E4EEEA; --muted:#9DB3AB;
+  --line:#253731; --primary:#5CC4A6; --primary-soft:#1A3A31; --gold:#D8B565;
+  --hero:#134A3E; --on-hero:#F2F8F5; --on-hero-muted:#A9CFC2;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans Arabic","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  font-size:16px;line-height:1.7;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+
+.topbar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:5;
+  display:flex;align-items:center;gap:12px;
+  height:56px;padding:0 16px;background:var(--surface);border-bottom:1px solid var(--line);
+}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;background:none;border:0;border-radius:8px;cursor:pointer}
+.icon-btn:hover{background:var(--primary-soft)}
+.brand{font-family:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;font-weight:700;font-size:19px;color:var(--primary);line-height:1.3}
+
+.sidebar{
+  position:fixed;top:0;bottom:0;inset-inline-start:0;z-index:20;width:var(--sidebar-w);
+  background:var(--surface);border-inline-end:1px solid var(--line);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) 12px calc(env(safe-area-inset-bottom,0px) + 12px);
+  display:flex;flex-direction:column;overflow-y:auto;
+  transform:translateX(-100%);transition:transform .22s ease;
+}
+[dir="rtl"] .sidebar{transform:translateX(100%)}
+.sidebar.open,[dir="rtl"] .sidebar.open{transform:translateX(0)}
+.sidebar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 8px 16px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.nav{list-style:none;margin:0;padding:0}
+.nav a{
+  display:flex;align-items:center;gap:12px;width:100%;
+  padding:10px 14px;border-radius:999px;margin-bottom:2px;
+  color:var(--ink);text-decoration:none;font-size:16px;
+}
+.nav a:hover{background:var(--primary-soft)}
+.nav a[aria-current="page"]{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.nav svg{flex:none}
+.section-label{font-size:13px;color:var(--muted);padding:14px 14px 4px;font-weight:500}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gold);flex:none;margin-inline:6px}
+.nav a[aria-current="page"] .dot{background:var(--primary)}
+
+.lang{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:4px;background:none}
+.lang-switch{display:flex;width:100%;background:var(--primary-soft);border-radius:999px;padding:4px}
+.lang-switch button{flex:1;border:0;background:none;border-radius:999px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--muted)}
+.lang-switch button[aria-pressed="true"]{background:var(--surface);color:var(--primary);font-weight:600}
+
+.scrim{position:fixed;inset:0;z-index:15;background:rgba(10,20,18,.4);opacity:0;pointer-events:none;transition:opacity .2s}
+.scrim.show{opacity:1;pointer-events:auto}
+
+main{padding:32px 20px;max-width:880px}
+.greeting{background:var(--hero);color:var(--on-hero);border-radius:20px;padding:32px 28px}
+.greeting h1{
+  font-family:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  font-weight:500;font-size:clamp(1.9rem,6vw,3rem);line-height:1.4;margin:0;color:var(--on-hero);
+}
+.greeting .rule{width:56px;height:3px;background:var(--gold);border-radius:2px;margin:16px 0 12px}
+.greeting p{margin:0;color:var(--on-hero-muted);font-size:17px}
+.empty h1{font-size:24px;margin:8px 0 6px;font-weight:600}
+.empty p{color:var(--muted);margin:0}
+
+.page-head{margin-bottom:20px}
+.page-head h1{font-family:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;font-weight:500;font-size:30px;line-height:1.4;margin:0;color:var(--primary)}
+.page-head p{margin:2px 0 0;color:var(--muted)}
+.page-head .rule{width:40px;height:3px;background:var(--gold);border-radius:2px;margin-top:10px}
+.chapters{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.chapters a{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;color:var(--ink);text-decoration:none;transition:border-color .15s}
+.chapters a:hover{border-color:var(--primary)}
+:root{--soon-bg:transparent;--soon-line:#DCE7E2;--soon-ink:#56706A;--soon-num-bg:#EDF1EF;--soon-num-ink:#56706A;--soon-badge-bg:transparent;--soon-badge-ink:#56706A}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--soon-bg:transparent;--soon-line:#253731;--soon-ink:#8FA49D;--soon-num-bg:#1C2A26;--soon-num-ink:#7F948D;--soon-badge-bg:transparent;--soon-badge-ink:#8FA49D}}
+:root[data-theme="dark"]{--soon-bg:transparent;--soon-line:#253731;--soon-ink:#8FA49D;--soon-num-bg:#1C2A26;--soon-num-ink:#7F948D;--soon-badge-bg:transparent;--soon-badge-ink:#8FA49D}
+.chapters .locked{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--soon-bg);border:1px solid var(--soon-line);border-radius:14px;color:var(--soon-ink);cursor:default}
+.locked .num{background:var(--soon-num-bg);color:var(--soon-num-ink)}
+.badge{flex:none;font-size:13px;font-weight:400;padding:2px 12px;border-radius:999px;border:1px solid var(--soon-line);background:var(--soon-badge-bg);color:var(--soon-badge-ink);white-space:nowrap}
+.num{width:34px;height:34px;flex:none;border-radius:50%;background:var(--primary-soft);color:var(--primary);display:grid;place-items:center;font-weight:600;font-size:15px}
+.ch-title{flex:1;font-weight:500;font-size:17px}
+.chev{color:var(--muted);flex:none}
+[dir="rtl"] .flip{transform:scaleX(-1)}
+.crumb{display:inline-flex;align-items:center;gap:6px;color:var(--primary);text-decoration:none;font-size:15px;margin-bottom:12px}
+.crumb:hover{text-decoration:underline}
+.rec-list{display:grid;gap:12px}
+.rec-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.rec-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rec-icon{width:42px;height:42px;border-radius:50%;background:var(--hero);color:var(--on-hero);display:grid;place-items:center;flex:none}
+.rec-title{font-weight:600;font-size:17px;line-height:1.4}
+.rec-meta{color:var(--muted);font-size:14px}
+.rec-card audio{width:100%;display:block}
+.rec-icon{position:relative}
+.rec-card.is-loading .rec-icon::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid transparent;border-top-color:var(--gold);border-right-color:var(--gold);animation:spin .8s linear infinite}
+.rec-meta{display:flex;align-items:center;gap:8px;min-height:1.5em;white-space:nowrap}
+.rec-card.is-loading .rec-meta{color:var(--primary)}
+.rec-card.is-error .rec-meta{color:#B3261E}
+:root[data-theme="dark"] .rec-card.is-error .rec-meta{color:#F2A49C}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .rec-card.is-error .rec-meta{color:#F2A49C}}
+.rec-meta .retry{border:0;background:none;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font-size:14px;font-weight:600;line-height:inherit}
+@media (prefers-reduced-motion:reduce){.rec-card.is-loading .rec-icon::after{animation-duration:2s}}
+.spin{width:16px;height:16px;flex:none;border:2px solid var(--line);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:2s}}
+.quiz-card{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
+.quiz-card .rec-head{flex-wrap:wrap}
+.quiz-icon{background:var(--primary-soft) !important;color:var(--primary) !important}
+.best{color:var(--primary);font-weight:500}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:8px 20px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-decoration:none;cursor:pointer;font-size:15px;font-weight:500}
+.btn:hover{border-color:var(--primary)}
+.btn.primary{background:var(--hero);border-color:var(--hero);color:var(--on-hero)}
+.btn.primary:hover{filter:brightness(1.08)}
+.q-progress{display:grid;gap:8px;margin-bottom:14px;color:var(--muted);font-size:14px}
+.bar{height:6px;background:var(--line);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--primary);border-radius:999px;transition:width .2s}
+.q-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 20px}
+.q-text{font-family:"IBM Plex Sans Arabic","Noto Sans Arabic",Tahoma,sans-serif;font-weight:600;font-size:24px;line-height:1.5;margin:0 0 18px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:start;padding:14px 16px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);cursor:pointer;font-size:17px;line-height:1.5}
+.opt:hover{border-color:var(--primary)}
+.opt .radio{width:20px;height:20px;flex:none;border-radius:50%;border:2px solid var(--line)}
+.opt.sel{border-color:var(--primary);background:var(--primary-soft)}
+.opt.sel .radio{border-color:var(--primary);background:var(--primary);box-shadow:inset 0 0 0 4px var(--primary-soft)}
+.q-err{min-height:1.5em;margin:10px 0 0;color:#B3261E;font-size:14px}
+.quiz-nav{display:flex;justify-content:space-between;gap:12px;margin-top:16px}
+.score-card{background:var(--hero);color:var(--on-hero);border-radius:20px;padding:28px;text-align:center}
+.score{font-family:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;font-size:46px;line-height:1.2}
+.score-pct{color:var(--on-hero-muted);font-size:17px;margin-top:4px}
+.rv-title{font-size:18px;margin:24px 0 10px;font-weight:600}
+.rv-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rv{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.rv-q{font-weight:500;display:flex;gap:8px}
+.rv-mark{flex:none;font-weight:700}
+.rv.ok .rv-mark{color:var(--primary)}
+.rv.no .rv-mark{color:#B3261E}
+.rv-a{color:var(--muted);font-size:15px;margin-top:2px}
+.rv-a.wrong [lang]{text-decoration:line-through}
+:root[data-theme="dark"] .q-err,:root[data-theme="dark"] .rv.no .rv-mark{color:#F2A49C}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .q-err,:root:not([data-theme="light"]) .rv.no .rv-mark{color:#F2A49C}}
+.q-card{position:relative}
+:root{--ok:#1E7F4F;--ok-bg:#E4F3EA;--bad:#B3261E;--bad-bg:#FBE9E7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ok:#6FD3A0;--ok-bg:#163527;--bad:#F2A49C;--bad-bg:#3A1F1C}}
+:root[data-theme="dark"]{--ok:#6FD3A0;--ok-bg:#163527;--bad:#F2A49C;--bad-bg:#3A1F1C}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.right .radio{border-color:var(--ok);background:var(--ok);box-shadow:inset 0 0 0 4px var(--ok-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg);animation:shake .4s}
+.opt.wrong .radio{border-color:var(--bad);background:var(--bad);box-shadow:inset 0 0 0 4px var(--bad-bg)}
+.opt.right.picked{animation:pop .35s}
+.opt.dim{opacity:.5}
+.opt[aria-disabled="true"]{cursor:default}
+.opt[aria-disabled="true"]:hover{border-color:inherit}
+.opt.right[aria-disabled="true"]:hover{border-color:var(--ok)}
+.opt.wrong[aria-disabled="true"]:hover{border-color:var(--bad)}
+.opt.dim:hover{border-color:var(--line)}
+.q-feedback{min-height:1.7em;margin:14px 0 0;font-weight:600;font-size:18px}
+.q-feedback.ok{color:var(--ok)}
+.q-feedback.bad{color:var(--bad)}
+.confetti{position:absolute;inset:0;pointer-events:none}
+.confetti i{position:absolute;left:var(--x);top:var(--y);width:8px;height:12px;border-radius:2px;animation:conf 1.1s ease-out forwards}
+@keyframes conf{to{transform:translate(var(--dx),var(--dy)) rotate(var(--r));opacity:0}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pop{50%{transform:scale(1.03)}}
+@media (prefers-reduced-motion:reduce){.opt.wrong,.opt.right.picked{animation:none}.confetti{display:none}}
+.opt{transition:background-color .28s ease,border-color .28s ease,opacity .35s ease,transform .15s ease}
+.opt:active:not([aria-disabled="true"]){transform:scale(.98)}
+.opt .radio{transition:background-color .28s ease,border-color .28s ease,box-shadow .28s ease}
+.bar i{transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.q-feedback.ok,.q-feedback.bad{animation:fbIn .3s ease-out}
+@keyframes fbIn{from{opacity:0;transform:translateY(6px)}}
+.q-card.enter{animation:cardIn .38s cubic-bezier(.2,.7,.2,1)}
+[dir="rtl"] .q-card.enter{animation-name:cardInRtl}
+.q-card.leave{animation:cardOut .26s ease-in forwards}
+[dir="rtl"] .q-card.leave{animation-name:cardOutRtl}
+@keyframes cardIn{from{opacity:0;transform:translateX(32px)}}
+@keyframes cardInRtl{from{opacity:0;transform:translateX(-32px)}}
+@keyframes cardOut{to{opacity:0;transform:translateX(-32px)}}
+@keyframes cardOutRtl{to{opacity:0;transform:translateX(32px)}}
+.q-card.enter .q-text{animation:riseIn .35s ease-out both}
+.q-card.enter .opt{animation:riseIn .35s ease-out both}
+.q-card.enter .opt:nth-child(1){animation-delay:.08s}
+.q-card.enter .opt:nth-child(2){animation-delay:.14s}
+.q-card.enter .opt:nth-child(3){animation-delay:.2s}
+.q-card.enter .opt:nth-child(4){animation-delay:.26s}
+.q-card.enter .opt:nth-child(5){animation-delay:.32s}
+@keyframes riseIn{from{opacity:0;transform:translateY(10px)}}
+.score-card{animation:riseIn .4s ease-out both}
+.rv-title,.rv-list{animation:riseIn .4s ease-out .12s both}
+@media (prefers-reduced-motion:reduce){.q-card.enter,.q-card.enter .q-text,.q-card.enter .opt,.q-card.leave,.q-feedback.ok,.q-feedback.bad,.score-card,.rv-title,.rv-list{animation:none}.bar i,.opt,.opt .radio{transition:none}}
+.book{display:flex;gap:16px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:20px}
+.book img{width:78px;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.14);flex:none}
+.book-info{flex:1;min-width:0}
+.book-label{font-size:13px;color:var(--muted);font-weight:500}
+.book-title{font-weight:600;font-size:17px;line-height:1.5}
+.book-meta{color:var(--muted);font-size:14px}
+.book-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn.sm{min-height:36px;padding:6px 18px;font-size:14px;min-width:96px}
+.btn[disabled]{opacity:.75;cursor:progress}
+.reader-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;color:var(--muted);font-size:14px}
+.pages{display:grid;gap:12px;max-width:820px}
+.page{position:relative;background:#FFFFFF;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.page canvas{display:block;width:100%;height:100%}
+.page .pn{position:absolute;bottom:6px;inset-inline-end:10px;font-size:12px;color:#56706A;background:rgba(255,255,255,.88);padding:0 8px;border-radius:999px}
+.reader-msg{display:flex;align-items:center;gap:10px;color:var(--muted);margin:8px 0}
+.seg{display:flex;max-width:440px;background:var(--primary-soft);border-radius:999px;padding:4px;margin:0 0 16px}
+.seg button{flex:1;border:0;background:none;border-radius:999px;padding:8px 12px;cursor:pointer;color:var(--muted);font-size:15px;transition:background-color .2s,color .2s}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--primary);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.res-list{animation:riseIn .3s ease-out both}
+.res-list .book:last-child{margin-bottom:0}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;animation:riseIn .3s ease-out both}
+.res-tile{display:flex;flex-direction:column;gap:2px;background:var(--primary-soft);border-radius:16px;padding:16px}
+.res-ico{color:var(--primary);margin-bottom:4px}
+.res-kind{font-size:13px;color:var(--muted);font-weight:500}
+.res-title{font-weight:600;font-size:16px;line-height:1.5}
+.res-meta{font-size:13px;color:var(--muted)}
+.res-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media (prefers-reduced-motion:reduce){.res-grid{animation:none}.seg button{transition:none}}
+.pg-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px}
+.pg-stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.pg-stat b{display:block;font-family:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;font-weight:500;font-size:24px;line-height:1.3;color:var(--primary)}
+.pg-stat span{display:block;font-size:13px;line-height:1.4;color:var(--muted)}
+.pg-title{font-size:17px;font-weight:600;margin:22px 0 8px}
+.pg-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:10px}
+.pg-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
+.pg-head h3{margin:0;font-size:18px;font-weight:600}
+.pg-head span{font-size:14px;color:var(--muted);white-space:nowrap}
+.pg-sub{font-size:14px;font-weight:500;color:var(--muted);margin:14px 0 2px}
+.pg-list{list-style:none;margin:0;padding:0}
+.pg-q{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.pg-q:first-child{border-top:0}
+.pg-score{font-weight:600;color:var(--primary);white-space:nowrap}
+.pg-score.low{color:#B3261E}
+:root[data-theme="dark"] .pg-score.low{color:#F2A49C}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pg-score.low{color:#F2A49C}}
+.pg-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pg-row .t{flex:1;min-width:0}
+.pg-row .t b{display:block;font-weight:600;line-height:1.5}
+.pg-row .t span{font-size:14px;color:var(--muted)}
+.pg-empty{color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:16px;margin:0}
+.pg-reset{margin-top:24px}
+@media (max-width:480px){
+  .pg-stats{grid-template-columns:1fr 1fr}
+  .pg-stats .pg-stat:last-child{grid-column:1 / -1}
+  .pg-row .btn{width:100%}
+  .pg-card{padding:14px}
+}
+.nav-soon{margin-inline-start:auto;font-size:12px;padding:1px 10px}
+.skip{position:absolute;inset-inline-start:12px;top:-60px;z-index:50;background:var(--hero);color:var(--on-hero);padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600}
+.skip:focus{top:calc(env(safe-area-inset-top,0px) + 8px)}
+@media (max-width:899px){
+  .sidebar{visibility:hidden;transition:transform .22s ease,visibility 0s linear .22s}
+  .sidebar.open{visibility:visible;transition:transform .22s ease,visibility 0s}
+  .btn,.btn.sm{min-height:44px}
+  .seg button{min-height:44px}
+  .lang-switch button{min-height:40px}
+  .crumb{min-height:44px;margin-bottom:4px}
+  .icon-btn{width:44px;height:44px}
+  main{padding:24px 16px}
+  .page-head h1{font-size:26px}
+  .q-text{font-size:21px}
+  .book{flex-wrap:wrap}
+}
+@media (min-width:900px){
+  .topbar,.scrim,.close-btn{display:none}
+  .sidebar,[dir="rtl"] .sidebar{transform:none;transition:none}
+  main{margin-inline-start:var(--sidebar-w);padding:56px 48px}
+}
+@media (prefers-reduced-motion:reduce){.sidebar,.scrim{transition:none}}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main" data-skip>Skip to content</a>
+<header class="topbar">
+  <button class="icon-btn" id="openMenu" aria-controls="sidebar" aria-expanded="false">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <span class="brand" data-t="appName"></span>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <span class="brand" data-t="appName"></span>
+    <button class="icon-btn close-btn" id="closeMenu">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <ul class="nav">
+    <li><a href="#home" data-view="home">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+      <span data-t="home"></span></a></li>
+    <li class="section-label" data-t="subjects"></li>
+    <li><a href="#fiqh" data-view="fiqh"><span class="dot"></span><span data-t="fiqh"></span></a></li>
+    <li><a href="#aqida" data-view="aqida"><span class="dot"></span><span data-t="aqida"></span></a></li>
+    <li><a href="#quran" data-view="quran"><span class="dot"></span><span data-t="quran"></span></a></li>
+    <li class="section-label" data-t="study"></li>
+    <li><a href="#exams" data-view="exams">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg>
+      <span data-t="exams"></span><span class="badge nav-soon" data-t="soon"></span></a></li>
+  </ul>
+  <div class="lang">
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button data-lang="en" aria-pressed="true">English</button>
+      <button data-lang="ar" aria-pressed="false">العربية</button>
+    </div>
+  </div>
+</nav>
+
+<main id="main" tabindex="-1"></main>
+
+<script>
+(function(){
+  var T = {
+    en:{
+      appName:"Elfadela Institute", home:"Home", subjects:"Subjects", study:"Study",
+      fiqh:"Fiqh", aqida:"Aqida", quran:"Quranic Sciences", hadith:"Hadith",
+      exams:"Exams", progress:"My progress",
+      greet:"Assalamu alaikum", welcome:"Welcome to Elfadela Institute",
+      empty:"No content yet.", chaptersN:" chapters", lecturesN:" lectures", chapter:"Chapter on", soon:"Coming soon", recording:"Lesson recording", part:"Part", loading:"Loading…", loadErr:"Couldn’t load", retry:"Try again", chapterQuiz:"Chapter quiz", best:"Best score", startQuiz:"Start quiz", retake:"Retake quiz", question:"Question", of:"of", next:"Next", prev:"Back", seeResult:"See result", chooseFirst:"Choose an answer first", review:"Review answers", yourAnswer:"Your answer", correctAnswer:"Correct answer", retryQuiz:"Retry", backToChapter:"Back to chapter", pctSign:"%", correct:"Correct!", book:"Course book", review:"Review", read:"Read", download:"Download", preparing:"Preparing…", pagesLabel:" pages", pageLabel:"Page", skip:"Skip to content", chaptersTab:"Chapters", lecturesTab:"Lectures", resources:"Resources", overall:"Overall", quizzesTaken:"Quizzes taken", avgScore:"Average score", listened:"Recordings completed", quizResults:"Quiz results", needsReview:"Needs review", continueListening:"Continue listening", resume:"Resume", stoppedAt:"Stopped at minute", resetProgress:"Reset my progress", resetConfirm:"Tap again to reset", progressEmpty:"Listen to a lecture or take a quiz, and your progress will show here.", lecturesDone:"lectures completed", reviewDoc:"Review", loadingBook:"Loading the book…", bookErr:"Couldn’t open the book here. Use Download instead.", wrongMsg:"Not quite", minsLabel:" min", emptyChapter:"Lessons for this chapter will appear here.", openMenu:"Open menu", closeMenu:"Close menu", nav:"Main menu"
+    },
+    ar:{
+      appName:"معهد الفضيلة", home:"الرئيسية", subjects:"المواد", study:"الدراسة",
+      fiqh:"الفقه", aqida:"العقيدة", quran:"علوم القران", hadith:"الحديث",
+      exams:"الاختبارات", progress:"تقدّمي",
+      greet:"السلام عليكم ورحمة الله", welcome:"أهلًا بك في معهد الفضيلة",
+      empty:"لا يوجد محتوى بعد.", chaptersN:" أبواب", lecturesN:" محاضرات", chapter:"باب", soon:"قريبًا", recording:"تسجيل الدرس", part:"الجزء", loading:"جارٍ التحميل…", loadErr:"تعذّر التحميل", retry:"إعادة المحاولة", chapterQuiz:"اختبار الباب", best:"أفضل نتيجة", startQuiz:"ابدأ الاختبار", retake:"أعد الاختبار", question:"السؤال", of:"من", next:"التالي", prev:"السابق", seeResult:"عرض النتيجة", chooseFirst:"اختر إجابة أولًا", review:"مراجعة الإجابات", yourAnswer:"إجابتك", correctAnswer:"الإجابة الصحيحة", retryQuiz:"إعادة الاختبار", backToChapter:"العودة إلى الباب", pctSign:"٪", correct:"إجابة صحيحة!", book:"كتاب المادة", review:"مراجعة", read:"قراءة", download:"تحميل", preparing:"جارٍ التجهيز…", pagesLabel:" صفحة", pageLabel:"صفحة", skip:"تخطَّ إلى المحتوى", chaptersTab:"الأبواب", lecturesTab:"المحاضرات", resources:"المصادر", overall:"نظرة عامة", quizzesTaken:"اختبارات منجزة", avgScore:"متوسط النتائج", listened:"تسجيلات مكتملة", quizResults:"نتائج الاختبارات", needsReview:"تحتاج مراجعة", continueListening:"أكمل الاستماع", resume:"استئناف", stoppedAt:"توقفت عند الدقيقة", resetProgress:"مسح تقدّمي", resetConfirm:"اضغط مرة أخرى للمسح", progressEmpty:"استمع إلى محاضرة أو أجرِ اختبارًا، وسيظهر تقدّمك هنا.", lecturesDone:"محاضرات مكتملة", reviewDoc:"مراجعة", loadingBook:"جارٍ تحميل الكتاب…", bookErr:"تعذّر فتح الكتاب هنا. استخدم زر التحميل.", wrongMsg:"إجابة خاطئة", minsLabel:" دقيقة", emptyChapter:"ستظهر دروس هذا الباب هنا.", openMenu:"فتح القائمة", closeMenu:"إغلاق القائمة", nav:"القائمة الرئيسية"
+    }
+  };
+  var views = ["home","fiqh","fiqh-book","aqida","quran","quran-book","quran-review","aqida-book","aqida-review","hadith","exams","progress"];
+  var fiqhBook = {src:"media/fiqh-book.pdf", title:"تمام المنة في فقه الكتاب وصحيح السنة", author:"عادل بن يوسف العزازي", pages:468, file:"تمام المنة في فقه الكتاب وصحيح السنة.pdf", cover:"data:image/jpeg;base64,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"};
+  var DOCS = {
+    "fiqh-book": fiqhBook,
+    "quran-book": {src:"media/quran-book.pdf", title:"مباحث في علوم القرآن", author:"مناع القطان", pages:384, file:"مباحث في علوم القرآن.pdf", cover:"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAFQAVAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCADIAIoDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD1jdxgUm7FFcFYwltL02aa81md57WKWdkv5AcuuflXPPOelRexVzvw470eaB2rjF0OedRKmuXUStyqvqMpIHbndg0v/CPXQz/xUM//AIHS/wDxVFwudn5wpDLXCmERMqNea07K5EjJfOVYeq+p6DHqQO4qdNInuR5sWt3kKN91Jr59344PX+XSldCujs94pwcVxBsnt3MM2qanLKw/dtDfNsz0wxPT29enXGZRo16P+Y/P/wCBzUXC52XmCguDXCsypIiPf60SpxMUuS2P93C888dueBk8VMmn3c6+ZFrN4iNyoe+y2O2eP8+/Wi6C6O03ikLiuLMEkTmCTVdTaZsbGjuwUOfU449vXoKkOlX+P+Q9dcel2P8ACncLnYK4xRvFcQJVVlB1DWtoBD7ZgTn0X5eR154zg/3Tiwum38qB1126QHkBrpSQPrii4XOvLjtShuK5FdLvhx/b92x9rlP8KgZWDKjazrO4HEmyZCAMHkHyznp7emckAlx3OzJy4pc1i+G/PSO+gnu57vyLxo0knIL7dqnBwAO57VsZNAAelcbo7Sf8I9ZXokIksLKAQjtgxKWB+v8A+rHWuybGw+mK4zRhjwh162cA/wDIC0mJl8wReY0kpf52diQkIA+YjjK8/iajVLVpcHdsyQD5cOf/AEHH45qV5Jgo2R7gN5XJ25+bPX69/wAOtZVtKdtpcJfzSXExUSRE8/xcdOABuOQBnyx1zzJJfvrh7OCF4JXxFKoRXjiKgFT02rwfoaoyajJLIXeG3LMcsfKHJqzqhd7NVK4H2kcj2Q8VnFOemKyqSd9DOTZes7m8uGe1tYID5g+dfLGCOnNWRpuqm4ERt4FBGd+Plx+FXvDdi8EMk8i7fNxtz1wK2pYhLC8TEgOpUkdaqMG1dsuMW1qcheXd9YXEcMkdsHgH7orEPlB449KdcWmrRKJjaRN5hyRGvQn1Apl/pF5FeLEWe4MnCPzz7V0ul2U9nCy3NyZ3OMZ/hHpUxUm2mSk2cvNc6nYQtHNaxxxynndECGPue/Sqp1i4H/LK3PHTyxXZatZm+06WBPvkArn1FcK8LRsUdSrjggjpU1OaL3ImpR6mjZavdXOowqwRBHE+GjiQMAMcAkHA9fpV+ZbWGMtvn8wHlMRgD15C1jaYHTUQVXdmJwR7HAP6VeunLzRW9zcG2hmWTcytgseeg6jHLf8AAa1pttGkLtF7bbmMOJ70nIBClcDJx12+9PjR53EYZR9h3vGxQZJDsMn8B7evXBFCynmkd+fPVZ2CSAg7sEHb+B+X14rRsmJvLvPUwOTxjkyyVZaJPDUpuIr6YrtMt2XI9MolbXHrWB4OYvpcznq02T/3wlb+2qKQHBQ/SuJ0t0Ww0qAiUW8tpbichTyxjUAD2OQPzxyDjtScKfpXIaMGbSNPvDJh7S0gWPjgKYQWH41LEy0t/YttjfUrKJo9ylHnVWU7uhGc9qZHLYLcsy6lp65GC3mx846d/eqV3j7bP/11b+dQBcsMDOfSsXPXYz5jRvpobhIraC5t5neddiRTKzHCMM4z06Vo6d4fjEfmXqkyZ4QNwB+FW9L0iGziSSSMNOeSx52+wrTwMVoo31Zaj3KVzdNHK0URUske4oFLNznbwD0yp/lVR9UnXYQqOhYoWRSxB2BugJzzu79uvHNi/wBOuLm4WSG4hRMANHLAZBkEkEfMMHnvnoD2qjfeF2uoiE1K4jOd20LHtkPOSwKnklm5GOo44FaFDH1m7+0mPy4l8pwr7vmP3lBIAOcYcEZwfbvRpuu3GpW8ssQiJjlyI1ZWYx7QQTtZsZOemT7VJp3ho6baYScmXYAFY7kUgDGM8jlVPpxwBk1Ss9NuvNMaDULMNIzMgggKJnjO45ycHGR16kZJJANmzu7iWYrNFwQrLtQrtBGec/l6+1R6locF+7TbmSUrgEYxn3og8PQxtE0t1czCFw8aM+FUjpwAOOnH3eOAK1sDik0mrMGrnCxQS6bqSLebLfzInVWkcBTkdjnGauXktpJAVN5ZyLLw0ZmRuvOD04/P+tdHfadbahHsnTOAdrDqv0rhb21azvJLd+ShwDjqOxrGX7tWMX7ptrcwYRvt1o3II/0leOQeR+FRXd4kZWa3kb98ZBK6DcGjEj/dPTPXnpyM9VzhhR6VuWkZurWKNnKraQCaLb/C+48/X/PenGfNoEZX0NTw5FHDBeRRKVjS7dVBzkABQOtbGaxvDErXFjPO4AaW4Z2x0yQK2cCtjYa3Cn6VyGipJ/ZGm2QKZu7OFwxP3R5QB/Hrj1x7EjrX+4fpXJaSi/8ACMFyoLR2luVPcHyVxj8ealiZFej/AE24/wCujfzNbulaNCI4bmUP5mM7D0B7Vlq0Ka2zXHMYmbP5nFdZG6yRq6HKtyDWVOKbuyYokApab1p1blgKX3pKWgApKUnikoASjNLTTQAE1l6po0GpESMxjlUYDDuPetOmtSaTVmDSe557LGYZXjYHKMRz1rVhdrW2t2RkJu4vLIP/ACzwx+Y/7PPXtx1zw7xK1q9xG0LqZcESbf0z79aNNVWgkLKD/oo6j/aaueCtNoxirSsavhuEW1rcwBt3l3Lrn1xgVr4FYfhNs6W5JyfOP8hW5kV0myIpP9U30NcjpzBbPSovKkMMtpAJlBGZD5agYGckY647A9Oc9dJnym/3TXJ6cWGhRXe9vOsrSDySD90GJSR+JPPr+AqHsJmpptos2rXMzdIpGwPXJNbwxisjR8m91D/rr/U1riiGwR2FHSlzzSUVYxc1TbUo01VLAo25494cDjPPH5KTn2+mZ7mD7RaywCVojIjKHXquRjI96zVs/EWNjavYFem9bBg5/wDIuM/h+FAGiJJjcsjRKIQoIffyT6Yxx/8AXqsb2VJLlWWPbHIoVmbaApUHk885z09qyLjwhJc38VzcalczOnSVGEMmM5ILr2yTgKF9zVm4sdRsZ1XT7r9zcYRmmjed42+Y7slhkYwOemBQBsxzCVNwVlB6bhgn8OtOrM0vSLmyvbq8utTlu5LoJlCu2OMrn7i5OOvr26mtM8DNADqZS80lAGNr+mwy2clxHGqyr87MB94d6xZX8m0sdkcg8xMOyHHmjJ+Qe/v15GO5XqNU/wCQZc/9cz/KuftYhc2672b9xAHjAP3WyeR7+/8A9esWvf0Ia1NXQlVI7xUXYq3bgL6dOK1cisXwzI81jNK5yzzszfUgVtYrW5ZHKf3T/wC6a5OwAXS7K085FS9tIPNY/wDLP92oGfrgY9/16qY/uHP+ya5bTv8AkWLgY/5dYP8A0UlS9hM2tH/4/L//AK6/1Na+ayNIGLu+95f6mtU52n1ohsEditd6jDZSxxzLOTICVMcLSDjrnaDjr3qNNWWW4iiitboiTP7x4jGFwM5IbBx0GQMcipYDObGNpU23OzkPjhvfHH5Ulj9rFlGL5ozc4+cx/dPp+mKsZHY6zbahoyarbl3gdC4AX5uM5GPXIIpzaxaR29lcNJiO+dEhPqWBK/niuV06a30XwgZJRcfY4bqWO4it497kiVkP0XjJ9c/gZ9WvItf0q2cW91Zm11aGPEybGVt4VWA9PmU0AdMmq2j3F3B5oV7IKZ88BARkH8qda30F8He3YvGpwJAPlf3U9DyCKybO2RPGeqTAkSNaW5IzwwJcD8th/M1Y0dY9O0CJ5pmClPOkaZwdpb5m59Mk0AX5r2GC5t7aRv3lwWEY9cDJpZbuGKeKGRwsk5IjXHXAya5y4nuXl0C7utvnDUJIyVGMq0coHHUcBeDyDWtOkssgvJ7ZnW2O6GFMFycYLHnGcE4Gf1IAANLdimpLHKD5bq+1ip2nOCOorLvLa91bShGbmXS5yyuJLd9xABzg5A/EVowxpEG29XYsx9T/AJ4/CgCHVCP7LuP+uZrn42NvBB5cqf6REFkyCfKGT859v8PTJG9qh/4llx/1zNYdi2LWTOP9Uv8AMVlL4yXuafh2EQWk8SklUuZFBPcA4/pWtWL4X/5Bj+87/wA62c1oiiGb/UP/ALprlLTP2fSV8gmN7OHegbm4+QDgew6+ww2Bg11M/wDx7yd/kP8AKuYsF3aGLos3m2lrB5LA/c/dqePxPPr34qHsJm5pePtd8f8App/U1euLhba3kmcEqgzgdT7D3qhpX/H1ff8AXX+pqbWLSe90q4htZFjuCu6Jm6Bwcrn2yBRB6AtiHVrOFlOoNFPcPbIXW2RiRIyglcL03ZPBHNZk9zLeX3h/XIoriGOTfDLbyZVlWRRgsPZlX86rp4m8RkeQfB119qHBP2hBFn13+lLY2t62ryap4mv4VeyhE0VtC22C2DbwWOfvNgEZPTJxWgzU8PqYW1SLGAuoSMP+BBX/AJsa56XWr3VbLV4rh7aRLaW3ubfyDlo1E3CP6MPLz+NSeRP4mVp5r6bSNEmctGkbeXNeZ/jZj91DwAO4/Cn6b4MGn6ncQWWpSQaNHMkr2QjUl5AA2DIfm2/d475IoA3CTH4u3DpNp+D/AMAk/wDszWVpvizTr7UFs7uxkssRma0knwY5Y1Gd4PQEDnnoKr6nf3Oui7vNKnNrp1lDIst+oy8+OWWLPAHHL+vTpT7Hwl4c07w7NNKPKF3bfv7yWT5wGUZwx6Z60AJeazpNzp2mXGm3q3EMGpxrncSQTuGOef4uParOhJLqthBrtxrd3mdPMMSOqQw+q7cc45BJPauf0bwzohh1DWb+S9l0+ZFhhub1yXk3fL5gAGQOVCk89TwKntPB2h6NrUdhqGoXU9vcp50ENzPtikcN8wIGAxwVPPXmgDY8UxnxD4ZRtNurRrczbnN1I6RSoNwI3KQcbsEdjj0qXwI10PDEMN1cR3JhkeOOeJiyyIDgEE9QOmfaofEM3h59JFj4gaJlMmYrWCUl2IJC7VXB6dulSeCtJk0u0uf3VxbW80ga3tLibe8K46n+6T6c4xQBuan/AMg2f/rma5u5DiLTgtvvEibRg488/Mdh9uB/30T0DA9JqY/4ltx/1zNYMMay2js+SUhAU5Py/dPHpyc/l6CspfES9zW0LAgueMYu5uPT5jWpmsbw47PYzMxyxuZST/wI1rZq7lDJsfZ5Mf3T/KuWstg0yytxMBFdWkP2hsf6r92oH5gfh1ORxXT3HFvIQf4D/KuY04geGJlzybaDH/flKT2Eza0vH2u+/wCun9TWqORWXpX/AB9Xv/XX+prUApR2BbEU9ql0oSXeU6lVYqG+uOo9ulVL/wAN6Nqgtxe6dDKLf/VArgKPTA6jjoeK0gMU6tEMp3mk2OoxpHeWsUyRnKq6AgVR1XwxFqkgH2+7tbdwFuLa3cKkwHQHjI44OMZHFbYNFAFdLC1ishZRwRrbhPLEQXC7cYxisC08AaJbzo8v2q7iiOYbe6naSKL02qePzzXT45pO9AEFzax3EBgfKqcfcO0jBBGCPcVUvdB0zUrJbO/tRdQqcjzmLMD6hicj860jTc0AY+neFNC0kMbDTo7d2GPMUkuB7MSSPwNaUNtDbKVhjCAnJx1Y+pPc+5qYjimmgCpqZ/4l1x/uGudLhIYVjkYLJGBcYXPlr/eHvwOPofZui1LnTrj/AHDWFbD/AEaYZH+qX/2WspfES9zQ8PhRaXATlRdSgfTea1+PWsTwuP8AiWP/ANd5P/Qq2qooiuSPssv+4f5VytsJfK0ZRDGwezi2oSf3+FGQfp15/XoOouuLObH/ADzb+VczYop8PySnmSK1twjZ5X92p4/Ek/Wk9hM1NOu0i1G4hfgyyHB9CCa3BXJrCs+rNG77VaZsk/XpXUxIsSKi9FGBk5pU2KLJhQRQOmaO9alB0paKKADpSE85qrBqVtdPIsUqsEP3g6kHpzkH3xzUqTpJJJEpO6MgNketADycmlFIRSigAppHFPpDQBnavNHDp0u84LqVUeprn7oSEacBbqwkQKvzY848nY3t0/76J6Ag3PEVsySpMZnZXz8rN0PsKjgjWSxuXYZMcKKpz0G1T/Mk1jduZDepp6EP9HueP+Xub/0M1pYNZnh0k6dIxOSbqfJP/XRq1Mj1rQsguubObP8Azzb+VczZ+WNPsog7CCa1i+1sFyE/dqBz7jH0610l2c2c2P8Anm38q52wx/wjc4yATbQ4/CJCaT2EyK64upv+ujfzrb0jU4nt44Jph5wOAG6kduaw7o5uJgf+ejfzqv0PoRWClyszTsd4pyKU1maXqcd1boryKJh8pUnBJ9RWjkmulNNaGqdyITS/bmhMQEXlhhJuGS2SCMflz71HcXlsLKWa6Bit1U7jJ8u4Y546/nVfVdK0q7X7TfwKWjAAmDlHQezggj8DVCystNhZ5Y3u5JICXDN5kjbQchcyFjnjHBGfypgXXvdN1O3DQ2637oiyLAFUOqsSAcORjOD1x0qyGt7GOMRWwjErhNsSDgn1x6Vl3dxot0J4XjmuWk+aVQjkHA4znjAz06ZPrUJ03REkcLZXKyx4Di2aSMSHaDkpGQOc9SO30pgaV9ewfb7bTzfLA824hFYb3xg7R6cEnjnjqK0x0rPsYrcbo4LH7OIThcxbc57j/OfWtAdOaAFzVe5vILWPzJ5FRegJ706aZIVLyOEUdycCuO1e7+3XzupJjX5UB9KznPlRMpWRFqF/JeXLyMxKknaPQdqvkqLeIRtIImiX7ZgZwuBjH+1jH4e+M4pfBPHTtW1DIq6ZehmCloY2AJ6jYOf0P5VhTbcjOLuzW8PlTYy7en2u4x/39atPj1rJ8OA/2c4I/wCXq4/9GvWrkV0GxBcr/oc3/XNv5VzdqJNujKEjO60i2IT/AK3Cgnd9OSPTqM9B0t1/x5zf9c2/lXOaeqt4fkcgF1toNp7j9yp4/n9aGJkosI5iZJJ5F3szHagwPmOKjGm2rSFTdyAf3tvX9KmaeSKyMqR72SEsoU/McAnvxn5j3rPtJLiP7Jffb/tUtztBjVk+cDP3fm4Azk4L5C8e02T6Ektxaf2eY7mCd2ZZABvUehOeD7frWzputxzR7buRUl3YAwcGszUnd7KLj704Oc/9M24/lWbt9Khvlegr2eh3MqCaF4izKHUjKnBH0Paqf2WJpWgjvJ+efL3ZAGckf0/GqugXkk8TQysWMeNpPXFassiwxPMw4RST64rVO6uaJpjZLab7MIo7t1cY/esoLdMew9+lRDT5AmBezbyfmfC5Ixgdvx+tYV3rdxLeLLCWRI+iMO/fNb9jfR3sHmxggA4IbqDRGabsJSTJIIDbqwM8su45zIQcewwBUV5qVvaBlkkAkC5C45NS3NwsFvJK3IRScetcdPcPdztNKcs3p29qU58uwpMmuJbjXrtw0iQJbxAgBN2STj1HpQ+iNGoBv8Z9bYjH/j1LpR2yagQuf3CA+3L1O0ss96IDKIFCh+Au6Q5BODycDGD8v8a4OamKTV2SlcrHQDhSNQ+8QB/op/8AiqfOtws2nxhomMQ2ocYAYHGXHoSFx75x8201PZXU7xRSOEMgb/WKoCSAZ+YbSRg545Jx+NIEVrDWGYAkHg46ZXmmoroOxqeHxmxmP/T5c/8Ao561MGszw7/yD5f+vy6/9HvWpg+lWWVbsf6JLj+438q5vT2C6IsDAiS4tYfKXH3/ANyBx+NdHdE/Y5Tj/lmf5Vz2mPNJY6ZJDeW6hLJAhZhhDtXIIz7Ht6dMfMPYTLME8LW8KNcQLiJVYGZR2OQc/WobdLCK8eSP7GjHHzhlHTgdverCtAeZFdnH3jvDZP4A0uLYn/VT59Q5/wAKQitqEkUkEMUUkcjefnakgY4ETDt+FUzDL2if/vk1p+TqpaHyJtsQclEZ8svB5Y55Ge3PHGMkFXiGXLfa47mSbPzPGx2n6YHAqXG5LRmW0l1ZyeZCjA4wcoSDVyPVtQ8/zHhLLjGzYQKsLb3+yX7GZIof4llY72/3M/dPX9OnWl8qHAzBqIP+yXqVFrqFjNu5ri5uhcG3ZGXGAEPb+dTyavqLFdkPl4OTiM/N+dWDBrYlh8piIwD5e9s7f+unPPf1PuD81Ig2/wDH3/avn5O/yzIVz7beMfSjlfcLFK6v7+8i8uSMqncKhGaqiGT/AJ5P/wB8mtgi9ETGH7V9jLDeJN5nx3255/r1xTWFvg7RrO7tnz8UOF92FilpbiKW/SVliZ4ogA52kjL5xmrNzDbzFWkFvIQ24ZIJGDuHIJ7genQVIy68bhQFjOEJQvjZjj7+B976d8Y43U1YrbaDOmq+b/HtWXGe+NvH5celWlZWGkWINkJiCGJUUjChgAOvvx1qqsiCx1IZG6QBl/2htHT15qQxWZXPl6p9CJv/ANdKsOote2xlgVljBMbEDAGR97j72M9Mc4wD82GMt+HWP9ny/wDX9d/+lEla24+lZPhz/kHSn/p+u/8A0okrVqiiNiNpBGc9qo/2LoxH/IJsv/AdP8KKKAE/sLRM86PYn62yf4Uo0LQe+h6f/wCAqf4UUUAH/CP+Hz/zAtO/8BU/wpP+Ed8P/wDQB03/AMBI/wDCiigA/wCEc8On/mA6b/4CR/4Uo8NeGz/zANN/8BI/8KKKAD/hGvDZ/wCYDp3/AICp/hSnwt4bb/mB6f8A+Ayf4UUUAH/CK+Hcf8gWw/78L/hSHwn4dP8AzBbH/vwv+FFFACHwp4eJ/wCQLY/9+F/wo/4RHw6R/wAgSx/78L/hRRQAh8I+HR/zBLH/AL8L/hR/wiXh8/8AMFsv+/C0UUAaVnYW1jbLbWkEcEKZ2xxqABk5PH1JqbZ7UUUCuf/Z"},
+    "quran-review": {src:"media/quran-review.pdf", title:"مراجعة علوم القران", pages:39, file:"مراجعة علوم القران.pdf", review:true, cover:"data:image/jpeg;base64,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"},
+    "aqida-book": {src:"media/aqida-book.pdf", title:"القول المفيد على كتاب التوحيد", author:"محمد بن صالح العثيمين", pages:551, file:"القول المفيد على كتاب التوحيد.pdf", cover:"data:image/jpeg;base64,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"},
+    "aqida-review": {src:"media/aqida-review.pdf", title:"أسئلة مدارسة كتاب القول المفيد", pages:12, file:"أسئلة مدارسة القول المفيد.pdf", review:true, cover:"data:image/jpeg;base64,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"}
+  };
+  DOCS["aqida-book"].subj = "aqida"; DOCS["aqida-review"].subj = "aqida";
+  DOCS["fiqh-book"].subj = "fiqh"; DOCS["quran-book"].subj = "quran"; DOCS["quran-review"].subj = "quran";
+  var subjTab = {};
+  var resBookSvg = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5z"/><path d="M12 6v13"/></svg>';
+  var resNotesSvg = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>';
+  function resTile(t, key){
+    var b = DOCS[key];
+    return '<div class="res-tile"><span class="res-ico">' + (b.review ? resNotesSvg : resBookSvg) + '</span><div class="res-kind">' + (b.review ? t.reviewDoc : t.book) + '</div>' +
+      '<div class="res-title"><span dir="auto">' + b.title + '</span></div><div class="res-meta">' + num(b.pages) + t.pagesLabel + '</div>' +
+      '<div class="res-actions"><a class="btn sm primary" href="#' + key + '">' + t.read + '</a><button type="button" class="btn sm" data-dl="' + key + '">' + t.download + '</button></div></div>';
+  }
+  document.addEventListener("click", function(e){
+    var b = e.target.closest && e.target.closest("#main [data-tab]"); if (!b) return;
+    var key = location.hash.replace("#",""); if (!SUBJ[key]) return;
+    subjTab[key] = b.dataset.tab; render();
+  });
+  function bookCard(t, key){
+    var b = DOCS[key];
+    return '<section class="book"><img src="' + b.cover + '" alt="" width="78"><div class="book-info"><div class="book-label">' + (b.review ? t.review : t.book) + '</div>' +
+      '<div class="book-title"><span dir="auto">' + b.title + '</span></div>' +
+      '<div class="book-meta">' + (b.author ? '<span dir="auto">' + b.author + '</span>, ' : '') + num(b.pages) + t.pagesLabel + '</div>' +
+      '<div class="book-actions"><a class="btn sm" href="#' + key + '">' + t.read + '</a>' +
+      '<button type="button" class="btn sm primary" data-dl="' + key + '">' + t.download + '</button></div></div></section>';
+  }
+  var watersQuiz = [
+    {q:"الطهارة في اللغة", o:["ارتفاع الحدث","النظافة"], a:1},
+    {q:"الحدث هو", o:["فعل","وصف معنوي","وصف مادي"], a:1},
+    {q:"النجس", o:["مستقذر ملموس","شيء معنوي","فعل"], a:0},
+    {q:"الطهارة في الاصطلاح", o:["١- ارتفاع الحدث","٢- زوال النجس","١ و ٢"], a:2},
+    {q:"الماء الطهور", o:["الباقي على أصله","لم يحدث له أي إضافة","كل ما سبق"], a:2},
+    {q:"الماء الطاهر", o:["أصله طهور","تمت إضافة شيء إليه","حدث له تغير أثر فيه أو لم يؤثر","كل ما سبق"], a:3},
+    {q:"الماء النجس", o:["١- أصله نجس","٢- أصله طاهر","٣- أُضيفت إليه نجاسة أثرت فيه","٢ و ٣","١ و ٣"], a:3},
+    {q:"البحار والأنهار والأمطار والآبار", o:["ماء طاهر","ماء طهور"], a:1},
+    {q:"تجوز الطهارة", o:["بالماء المستعمل","بالماء الساخن","بالماء الآجن","بماء زمزم","كل ما سبق"], a:4},
+    {q:"يجوز الوضوء بالماء الذي به أوراق شجر أو طحلب أو تراب", o:["صح","خطأ"], a:0},
+    {q:"إذا بلغ الماء القلتين", o:["يحمل الخبث","لا يحمل الخبث"], a:1}
+  ];
+  var asarQuiz = [
+    {q:"اختر الإجابة الخاطئة", o:["الطهارة لغة: النظافة، واصطلاحًا: ارتفاع الحدث وزوال النجس","الحدث وصف معنوي يقوم بالبدن إذا وُجد سبب يمنع العبادة","النجس مستقذر يمنع من صحة العبادة، وزواله بتنقيته عما أصابه","الحدث يُرفع بالغسل فقط"], a:3},
+    {q:"اختر الإجابة الخاطئة", o:["الأصل أن الماء طاهر في نفسه مطهر لغيره، فإن عُدم الماء كان التطهر بالصعيد الطيب","كل ما يصدق عليه إطلاق لفظ الماء بدون أي تغيير أو إضافة تخرجه عن هذا الوصف تجوز الطهارة به","لا تصح الطهارة بما نزل من السماء من مطر وثلج وبرد، ولا مياه البحار والأنهار، وكل ما نبع من الأرض"], a:2},
+    {q:"اختر الإجابة الصحيحة", o:["الماء المستعمل المنفصل عن أعضاء المتوضئ والمغتسل لا يصح التطهر به","الماء الذي خالطه طاهر لم يغير فيه تغييرًا فاحشًا يخرجه عن مسمى الماء لا يجوز التطهر به","الماء الذي خالطته نجاسة غيرت طعمه أو لونه أو ريحه فهو نجس بالإجماع، ولكن إن لم يتغير لا ينجس","ما يقع في الماء من الأشجار والطحالب أو التراب يُفقد الماء الطهارة والطهورية"], a:2},
+    {q:"اختر الإجابة الصحيحة", o:["الماء الآجن الذي تغير بطول مكثه لا نتطهر به","يجوز الوضوء بالماء المشمس والساخن، ويجوز الوضوء بماء زمزم","إذا شك في نجاسة الماء أو طهارته يبني على الشك","لا يجوز التطهر بمياه المجاري المعالجة فنيًا بإزالة النجاسة منها","كل ما سبق"], a:1}
+  ];
+  var TF = ["صح","خطأ"];
+  var najasatQuiz = [
+    {q:"اختر الإجابة الصحيحة", o:["وردت الأدلة الشرعية من الكتاب والسنة بوجوب إزالة النجاسة","النجاسة: البول والغائط فقط","كلاهما صحيح"], a:0},
+    {q:"اختر الإجابة الصحيحة (أحكام الميتة)", o:["الميتة: كل ما مات دون تذكية","ما قُطع من الحيوان مأكول اللحم قبل ذبحه نجس لأنه ميتة ولا يحل أكله","كلاهما صحيح"], a:2},
+    {q:"اختر الإجابة الصحيحة (أحكام الميتة)", o:["ميتة السمك والجراد نجسة","عظم الميتة وشعرها وقرنها وظفرها نجس مثل الجلد","الراجح أن جلد الميتة يطهر بالدباغ في مأكول اللحم فقط","لبن الميتة وإنفحتها نجس","ميتة ما لا نفس سائلة له نجس","لا شيء مما سبق صحيح"], a:5},
+    {q:"لحم الخنزير وبول الآدمي وغائطه من النجاسات", o:TF, a:0},
+    {q:"حكم بول الجارية والغلام اللذين لم يأكلا الطعام هو الغسل", o:TF, a:1},
+    {q:"بول وروث الحيوان مأكول اللحم طاهر، واختلفوا في غير مأكول اللحم، والراجح طهارته عدا روثة الحمار", o:TF, a:0},
+    {q:"لعاب الكلب نجس، وطهارته الغسل سبع مرات إحداها بالتراب", o:TF, a:0},
+    {q:"دم الحيض نجس، والراجح طهارة بقية الدماء", o:TF, a:0},
+    {q:"المذي: ماء رقيق لزج يخرج عند الشهوة، ولا يعقبه دفق ولا فتور، وربما لا يُحس بخروجه، وهو نجس", o:TF, a:0},
+    {q:"المذي: ينقض الوضوء، ويُغسل منه الفرج، ويُرش الثوب كفًّا من الماء", o:TF, a:0},
+    {q:"ماء أبيض غليظ يخرج من الإنسان بشهوة، ويخرج بتدفق ويعقبه فتور، ورائحته مثل البيض الفاسد، هو:", o:["المني","الودي"], a:0},
+    {q:"ماء أبيض ثخين يخرج بعد البول بكدر، وينقض الوضوء، ويُغسل منه الفرج ويُرش الثوب، هو:", o:["المني","الودي","المذي"], a:1},
+    {q:"المني طاهر على الراجح، فيُغسل إن كان رطبًا ويُفرك إن كان يابسًا، لكنه يوجب الغسل", o:TF, a:0},
+    {q:"اختر الإجابة الخاطئة", o:["اختلف العلماء في نجاسة الخمر، والراجح طهارتها","إذا أُريق الخمر من إناء وأُزيل منه أثر الخمر بالغسل جاز الانتفاع به، إلا إذا كان شكله يوجب سوء الظن","القيء والقلس والمخاط والبصاق، الصحيح أنها نجسة وتنقض الوضوء"], a:2},
+    {q:"يطهر دم الحيض بالحت والنضح، أي دلك موضع الدم وغسله بالماء، وإن بقي أثره في الثوب", o:TF, a:0},
+    {q:"تطهير نجاسة لعاب الكلب", o:["إراقة الماء الذي ولغ فيه الكلب","غسل الإناء الذي ولغ فيه الكلب سبع مرات أولاهن بالتراب","كلاهما"], a:2},
+    {q:"الراجح نجاسة لعاب الكلب فقط، وبقية أجزائه طاهرة على الصحيح", o:TF, a:0},
+    {q:"تطهير النعل من النجاسة", o:["التراب له طهور، ويكفي فيه الدلك في تراب الأرض","يجب غسله بالماء"], a:0},
+    {q:"تطهير ذيل المرأة إذا أصابته نجاسة", o:["تمشي في أرض طاهرة فيطهره ما بعده من الأرض","يجب غسله بالماء"], a:0},
+    {q:"تطهير الأرض من النجاسة", o:["بصب الماء عليها","بالجفاف، فإذا جفت الأرض زكت","كلاهما"], a:2},
+    {q:"تطهير الأرض من النجاسة السائلة يطابق تطهيرها من النجاسة الجامدة (التي لها جرم وأثر)", o:TF, a:1},
+    {q:"تطهير الأطعمة الجامدة إن وقعت فيها نجاسة يكون بإلقاء النجاسة وما حولها", o:TF, a:0},
+    {q:"إن وقعت نجاسة في طعام سائل، فالراجح أنه لا ينجس إلا بالتغير", o:TF, a:0},
+    {q:"الآنية المصقولة مثل الزجاج والسكين يكفي المسح لإزالة النجاسة", o:TF, a:0},
+    {q:"إذا وقعت فأرة في سمن جامد وخرجت حية، فالسمن طاهر لم ينجس", o:TF, a:0},
+    {q:"اختر الإجابة الصحيحة", o:["١- تطهير المذي بغسل الفرج","٢- تطهير جلود الميتة بالدباغ","٣- تطهير بول الغلام الذي لم يأكل الطعام برشه بالماء، ويُغسل كالبنت بعد أكل الطعام","٤- إذا مات حيوان في بئر أو مصرف مياه، فإن لم يتغير الماء فهو طاهر، وإن تغير نضح حتى يطيب","٣ و ٤","كل ما سبق"], a:5},
+    {q:"اختر الإجابة الصحيحة", o:["قول الجمهور أن تطهير كل النجاسات يكون بالماء فقط","الطهارة التي يتعين فيها الماء هي الطهارة من الحدث، ولا يُنتقل فيها للتيمم إلا إن عُدم الماء أو ضرّه","يجوز استعمال الأطعمة والأشربة في رفع النجاسة","لا تطهر النجاسة بالاستحالة لشيء آخر، مثل حرق العذرة وتحولها لتراب، فتظل نجسة، وهذا القول الأظهر","كل ما سبق"], a:1},
+    {q:"اختر الإجابة الصحيحة", o:["إذا أكل حيوان سؤره طاهر نجاسة وشرب من ماء مباشرة بعد أكله، فالراجح أنه نجس","تطهير النجاسة من الثوب يجب فيه غسله كله وليس مكانها فقط","الاحتياط بمجرد الشك في أمور الماء مستحب ومشروع","لا شيء مما سبق صحيح"], a:3},
+    {q:"اختر الإجابة الخاطئة", o:["لا يُسأل عن طهارة الماء إذا أصابه، ويحمله على الأصل","إذا شك في روثة هل هي نجسة أم لا، فالأصح أن الأصل في الأعيان الطهارة","فأرة المسك نجسة عند جماهير العلماء","لا يجوز التداوي بالنجاسات ولا بشيء حرّمه الله","يجوز استخدام النجاسة فيما ينفصل عن استخدام الإنسان، مثل إطعام الميتة للصقور"], a:2},
+    {q:"اختر الإجابة الصحيحة", o:["إذا استيقظ الإنسان من نومه يغسل يده قبل وضعه في الماء تعبدًا، وليس معناه أنه سيُنجس الماء","نهى النبي صلى الله عليه وسلم عن التبول في الماء الراكد رغم أنه لا ينجس إلا بالتغير، لدفع الوسوسة","لا يجب غسل الرجل من طين الشارع إلا إذا تُيقّن أنه نجس","يُعفى عن أثر النجو بعد الاستجمار","كل ما سبق"], a:4},
+    {q:"غسل الملابس في الغسالات وتجميعها في مكان واحد، وإن كان البعض متنجسًا، لا يضر الباقي، والراجح أن الثياب كلها تطهر", o:TF, a:0}
+  ];
+  var aniyaQuiz = [
+    {q:"اختر الإجابة الصحيحة", o:["الأصل في الآنية هو الحل، فيُباح تملكها وبيعها والانتفاع بها","الجمهور على تحريم استعمال آنية الذهب والفضة في غير الطعام والشراب أيضًا، وهذا هو الراجح","يُلحق بحكم آنية الذهب والفضة بقيةُ الأحجار الكريمة في تحريم الأكل والشرب فيها","كل ما سبق"], a:0},
+    {q:"اختر الإجابة الصحيحة", o:["يُستثنى من حل الآنية كراهة الأواني الثمينة لما فيها من إسراف، وتفصيل آنية الذهب والفضة وآنية المشركين","يحرم الأكل والشرب في آنية الذهب والفضة للرجال والنساء، أما التحلي فالفضة للرجال وكلاهما للنساء","الأكل والشرب في آنية الذهب والفضة من كبائر الذنوب","كل ما سبق"], a:3},
+    {q:"اختر الإجابة الصحيحة", o:["يجوز تضبيب الإناء بالفضة إن انكسر، ولا يمنع ذلك الأكل والشرب فيه","الآنية المباحة إن كانت على شكل حيوان يحرم استخدامها، ويكون التحريم ليس لذاتها ولكن لعلة الصور","كلاهما"], a:2},
+    {q:"لا يجوز الأكل والشرب في آنية الكفار حتى وإن غُسلت، وإن لم يكن شكلها مشبوهًا كزجاجات الخمر", o:TF, a:1}
+  ];
+  var qadaQuiz = [
+    {q:"اختر الإجابة الخاطئة (قضاء الحاجة)", o:["قضاء الحاجة شرعًا هو كناية عن خروج البول والغائط","من آداب الخلاء الدخول بالقدم اليسرى والخروج باليمنى، ودعاء دخول الخلاء والخروج منه","التسمية ودعاء الخلاء يُقال عند دخول المكان المعد لذلك، أما في غيره فيُقال عند تشمير الثياب","يجوز استصحاب ما فيه ذكر الله للخلاء دون قيد أو شرط"], a:3},
+    {q:"اختر الإجابة الصحيحة (قضاء الحاجة)", o:["١- يجوز رد السلام أثناء قضاء الحاجة","٢- الراجح عدم تحريم الكلام المطلق أثناء قضاء الحاجة، وإنما تحريم الكلام مع تبادل النظر للعورات","٣- يجب الاستتار عند التبول والتبرز","٤- الأفضل رفع الثوب قبل الوصول لمكان قضاء الحاجة","٥- يجوز استقبال واستدبار القبلة أثناء قضاء الحاجة","كل ما سبق","٢ و ٣"], a:6},
+    {q:"اختر الإجابة الخاطئة (قضاء الحاجة)", o:["يجب الأمن من رذاذ البول، لأن عدم الاستنزاه منه من أسباب عذاب القبر","لا يجوز قضاء الحاجة في طريق الناس وظلهم، وفاعل ذلك ملعون","لا يجوز التبول قائمًا وإن أَمِن رشاش البول"], a:2},
+    {q:"يجب الاستنجاء وإزالة عين النجاسة، ولا يقل عدد المسح عن ثلاث، فإن لم ينقَ المكان مسح أكثر لكن وترًا", o:TF, a:0},
+    {q:"اختر الإجابة الصحيحة (قضاء الحاجة)", o:["لا يُستنجى بالروث والعظم لأنه علف لدواب الجن وطعام لهم","يجوز الاستنجاء باليد اليمنى","لا يجوز استخدام الصابون الحديثة في إزالة نجاسة البول والغائط، ويجب استخدام اليد","كل ما سبق"], a:0},
+    {q:"اختر الإجابة الصحيحة (قضاء الحاجة)", o:["لم يرد شيء في غسل اليد بعد الاستنجاء","يجوز الاستنجاء من خروج الريح، ولا كراهة في التبول في الجحور","يُكره استقبال الشمس والقمر حال قضاء الحاجة","كل ما سبق","لا شيء مما سبق صحيح"], a:4}
+  ];
+  var fitraQuiz = [
+    {q:"ما جاء به حكم الشرع فى الحديث الصحيح اللعن فهو", o:["حرام فعله","مباح فعله"], a:0},
+    {q:"الفطرة هى", o:["الدين","العقل","النفس"], a:0},
+    {q:"حلق الشارب واعفاء اللحية من السنة", o:TF, a:1},
+    {q:"حكم إعفاء اللحية", o:["مباح","واجب","مستحب"], a:1},
+    {q:"السواك يكون جائز بفرشة الأسنان", o:TF, a:0},
+    {q:"النمص يكون للحاجب", o:["حرام","مباح"], a:0},
+    {q:"السنة حلق الابط والعانة", o:TF, a:1},
+    {q:"يجوز إطالة الأظافر تبعا للسنة", o:TF, a:1},
+    {q:"الختان", o:["حرام","واجب ومكرمة","مباح"], a:1}
+  ];
+  var fiqhChapters = [
+    {ar:"المقدمة", en:"Introduction", plain:true, recs:[{src:"media/fiqh-intro.mp4", mins:37}]},
+    {ar:"المياه", en:"Waters", recs:[{src:"media/fiqh-01-waters.mp4", mins:43}], quiz:watersQuiz},
+    {ar:"الأسآر", en:"Leftover water (As'ar)", recs:[{src:"media/fiqh-asar.mp4", mins:24}], quiz:asarQuiz},
+    {ar:"النجاسات", en:"Impurities", recs:[{src:"media/fiqh-najasat-1.mp4", mins:33},{src:"media/fiqh-najasat-2.mp4", mins:37},{src:"media/fiqh-najasat-3.mp4", mins:13}], quiz:najasatQuiz},
+    {ar:"الآنية", en:"Vessels", recs:[{src:"media/fiqh-aniya.mp4", mins:16}], quiz:aniyaQuiz},
+    {ar:"قضاء الحاجة", en:"Relieving oneself", recs:[{src:"media/fiqh-qada.mp4", mins:11}], quiz:qadaQuiz},
+    {ar:"سنن الفطرة", en:"Sunan al-Fitrah", recs:[{src:"media/fiqh-fitra.mp4", mins:24}], quiz:fitraQuiz},
+    {ar:"الوضوء", en:"Wudu", recs:[{src:"media/fiqh-wudu-1.mp4", mins:34},{src:"media/fiqh-wudu-2.mp4", mins:31}]},
+    {ar:"المسح على الخفين", en:"Wiping over the khuffs", recs:[{src:"media/fiqh-mash.mp4", mins:24}]},
+    {ar:"الغسل", en:"Ghusl", soon:true},
+    {ar:"التيمم", en:"Tayammum", soon:true},
+    {ar:"المسح على الجبيرة", en:"Wiping over a splint", soon:true}
+  ];
+  var quranLectures = [
+    {n:"1", ar:"المحاضرة الأولى", en:"Lecture 1", plain:true, recs:[{src:"media/quran-1.mp4", mins:36}]},
+    {n:"2", ar:"المحاضرة الثانية", en:"Lecture 2", plain:true, recs:[{src:"media/quran-2.mp4", mins:52}]},
+    {n:"3", ar:"المحاضرة الثالثة", en:"Lecture 3", plain:true, recs:[{src:"media/quran-3.mp4", mins:43}]},
+    {n:"4–5", ar:"المحاضرتان الرابعة والخامسة", en:"Lectures 4 & 5", plain:true, recs:[{src:"media/quran-4-5.mp4", mins:109}]},
+    {n:"6", ar:"المحاضرة السادسة", en:"Lecture 6", plain:true, recs:[{src:"media/quran-6.mp4", mins:47}]},
+    {n:"7", ar:"المحاضرة السابعة", en:"Lecture 7", plain:true, recs:[{src:"media/quran-7.mp4", mins:49}]}
+  ];
+  var aqidaLectures = [
+    {n:"1", ar:"المحاضرة الأولى", en:"Lecture 1", plain:true, recs:[{src:"media/aqida-1.mp4", mins:68}]},
+    {n:"2", ar:"المحاضرة الثانية", en:"Lecture 2", plain:true, recs:[{src:"media/aqida-2.mp4", mins:47}]},
+    {n:"3–4", ar:"المحاضرتان الثالثة والرابعة", en:"Lectures 3 & 4", plain:true, recs:[{src:"media/aqida-3-4.mp4", mins:102}]},
+    {n:"5", ar:"المحاضرة الخامسة", en:"Lecture 5", plain:true, recs:[{src:"media/aqida-5.mp4", mins:53}]},
+    {n:"6", ar:"المحاضرة السادسة", en:"Lecture 6", plain:true, recs:[{src:"media/aqida-6.mp4", mins:52}]},
+    {n:"7", ar:"المحاضرة السابعة", en:"Lecture 7", plain:true, recs:[{src:"media/aqida-7.mp4", mins:56}]},
+    {n:"8", ar:"المحاضرة الثامنة", en:"Lecture 8", plain:true, recs:[{src:"media/aqida-8.mp4", mins:61}]}
+  ];
+  var SUBJ = {fiqh:{items:fiqhChapters, docs:["fiqh-book"]}, quran:{items:quranLectures, total:7, docs:["quran-book","quran-review"]}, aqida:{items:aqidaLectures, total:8, docs:["aqida-book","aqida-review"]}};
+  var chevSvg = '<svg class="chev flip" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+  var backSvg = '<svg class="flip" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>';
+  function num(n){ return lang === "ar" ? n.toLocaleString("ar-EG") : String(n); }
+  function label(c){ return c.plain ? c[lang] : T[lang].chapter + ' ' + c[lang]; }
+  var lang = "en";
+  try { var saved = localStorage.getItem("lang"); if (saved === "ar" || saved === "en") lang = saved; } catch(e){}
+
+  var main = document.getElementById("main");
+  var sidebar = document.getElementById("sidebar");
+  var scrim = document.getElementById("scrim");
+  var openBtn = document.getElementById("openMenu");
+  var closeBtn = document.getElementById("closeMenu");
+
+  function applyLang(){
+    var t = T[lang];
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    document.title = t.appName;
+    document.querySelectorAll("[data-t]").forEach(function(el){ el.textContent = t[el.dataset.t]; });
+    var sk = document.querySelector("[data-skip]"); if (sk) sk.textContent = t.skip;
+    openBtn.setAttribute("aria-label", t.openMenu);
+    closeBtn.setAttribute("aria-label", t.closeMenu);
+    sidebar.setAttribute("aria-label", t.nav);
+    document.querySelectorAll(".lang-switch button").forEach(function(b){
+      b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
+    });
+  }
+  function render(){
+    var t = T[lang];
+    var key = location.hash.replace("#","");
+    var ch = 0, isQuiz = false;
+    var m = /^(fiqh|quran|aqida)-(\d+)(-quiz)?$/.exec(key); var subj = m ? m[1] : null; var items = subj ? SUBJ[subj].items : null;
+    if (m && items[+m[2]-1] && !items[+m[2]-1].soon) { ch = +m[2]; isQuiz = !!m[3] && !!items[ch-1].quiz; }
+    else if (m) key = subj;
+    else if (views.indexOf(key) < 0) key = "home";
+    var navKey = ch ? subj : (DOCS[key] ? DOCS[key].subj : key);
+    if (!DOCS[key] && bookObserver){ bookObserver.disconnect(); bookObserver = null; renderBook.token = null; }
+    if (!isQuiz){ quizState = null; clearTimeout(quizTimer); }
+    if (isQuiz){
+      renderQuiz(subj, ch, t);
+    } else if (ch){
+      var c = items[ch-1];
+      main.innerHTML = '<a class="crumb" href="#' + subj + '">' + backSvg + t[subj] + '</a>' +
+        '<section class="page-head"><h1>' + label(c) + '</h1><div class="rule"></div></section>' +
+        (c.recs && c.recs.length
+          ? '<div class="rec-list">' + c.recs.map(function(r, i){
+              var title = c.recs.length > 1 ? t.part + ' ' + num(i+1) : t.recording;
+              return '<section class="rec-card"><div class="rec-head"><span class="rec-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="5" height="7" rx="2"/><rect x="16" y="14" width="5" height="7" rx="2"/></svg></span><div><div class="rec-title">' + title + '</div><div class="rec-meta" role="status" aria-live="polite" data-default="' + num(r.mins) + t.minsLabel + '">' + num(r.mins) + t.minsLabel + '</div></div></div><audio controls preload="metadata" src="' + r.src + '"></audio></section>';
+            }).join("") + '</div>'
+          : '<p style="color:var(--muted);margin:0">' + t.emptyChapter + '</p>') + quizCard(subj, c, ch, t);
+    } else if (DOCS[key]){
+      renderBook(t, key);
+    } else if (key === "progress"){
+      renderProgress(t);
+    } else if (key === "home"){
+      main.innerHTML = '<section class="greeting"><h1>' + t.greet + '</h1><div class="rule"></div><p>' + t.welcome + '</p></section>';
+    } else if (SUBJ[key]){
+      var S = SUBJ[key];
+      var rows = S.items.map(function(c, i){
+        var inner = '<span class="num">' + (c.n ? (lang === "ar" ? c.n.replace(/\d/g, function(d){ return num(+d); }) : c.n) : num(i+1)) + '</span><span class="ch-title">' + label(c) + '</span>';
+        if (c.soon) return '<li><div class="locked" aria-disabled="true"><span class="num"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="ch-title">' + label(c) + '</span><span class="badge">' + t.soon + '</span></div></li>';
+        return '<li><a href="#' + key + '-' + (i+1) + '">' + inner + chevSvg + '</a></li>';
+      }).join("");
+      var docs = S.docs || [], tab = subjTab[key] || "list";
+      var tabs = docs.length ? '<div class="seg" role="tablist"><button type="button" role="tab" data-tab="list" aria-selected="' + (tab === "list") + '">' + t.lecturesTab + '</button><button type="button" role="tab" data-tab="res" aria-selected="' + (tab === "res") + '">' + t.resources + ' (' + num(docs.length) + ')</button></div>' : '';
+      var body0 = (tab === "res" && docs.length) ? '<div class="res-list">' + docs.map(function(d){ return bookCard(t, d); }).join('') + '</div>' : '<ul class="chapters">' + rows + '</ul>';
+      var body = docs.length ? '<div role="tabpanel" aria-label="' + (tab === "res" ? t.resources : t.lecturesTab) + '">' + body0 + '</div>' : body0;
+      main.innerHTML = '<section class="page-head"><h1>' + t[key] + '</h1><p>' + (S.total ? num(S.total) + t.lecturesN : num(S.items.length) + t.chaptersN) + '</p><div class="rule"></div></section>' + tabs + body;
+    } else {
+      main.innerHTML = '<section class="empty"><h1>' + t[key] + '</h1><p>' + t.empty + '</p></section>';
+    }
+    document.querySelectorAll(".nav a").forEach(function(a){
+      if (a.dataset.view === navKey) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
+    });
+  }
+  function recStatus(audio, state){
+    var card = audio.closest(".rec-card"); if (!card) return;
+    var meta = card.querySelector(".rec-meta"); if (!meta) return;
+    var t = T[lang];
+    card.classList.toggle("is-loading", state === "loading");
+    card.classList.toggle("is-error", state === "error");
+    if (state === "loading") meta.textContent = t.loading;
+    else if (state === "error") meta.innerHTML = '<span>' + t.loadErr + '</span><button type="button" class="retry">' + t.retry + '</button>';
+    else meta.textContent = meta.dataset.default;
+  }
+  function isAudio(e){ return e.target && e.target.tagName === "AUDIO"; }
+  document.addEventListener("waiting", function(e){ if (isAudio(e)) recStatus(e.target, "loading"); }, true);
+  document.addEventListener("seeking", function(e){ if (isAudio(e)) recStatus(e.target, "loading"); }, true);
+  document.addEventListener("stalled", function(e){ if (isAudio(e) && !e.target.paused) recStatus(e.target, "loading"); }, true);
+  ["playing","canplay","pause"].forEach(function(ev){
+    document.addEventListener(ev, function(e){ if (isAudio(e)) recStatus(e.target, "idle"); }, true);
+  });
+  document.addEventListener("seeked", function(e){
+    if (isAudio(e) && (e.target.paused || e.target.readyState >= 3)) recStatus(e.target, "idle");
+  }, true);
+  document.addEventListener("error", function(e){ if (isAudio(e)) recStatus(e.target, "error"); }, true);
+  document.addEventListener("click", function(e){
+    var b = e.target.closest && e.target.closest(".retry"); if (!b) return;
+    var a = b.closest(".rec-card").querySelector("audio");
+    recStatus(a, "loading"); a.load(); var p = a.play(); if (p && p.catch) p.catch(function(){});
+  });
+  var quizState = null;
+  var quizSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6v3H9z"/><path d="M9 4.5H6V21h12V4.5h-3"/><path d="M9 14l2 2 4-4"/></svg>';
+  function qCount(n){
+    if (lang !== "ar") return n + (n === 1 ? " question" : " questions");
+    if (n === 1) return "سؤال واحد";
+    if (n === 2) return "سؤالان";
+    if (n <= 10) return num(n) + " أسئلة";
+    return num(n) + " سؤالًا";
+  }
+  function qKey(subj, ch){ return "quiz:" + subj + "-" + ch; }
+  function getBest(subj, ch){ try { var v = localStorage.getItem(qKey(subj, ch)); return v ? JSON.parse(v) : null; } catch(e){ return null; } }
+  function setBest(subj, ch, score, total){ try { var b = getBest(subj, ch); if (!b || score > b.score) localStorage.setItem(qKey(subj, ch), JSON.stringify({score:score, total:total})); } catch(e){} }
+  function quizCard(subj, c, ch, t){
+    if (!c.quiz) return "";
+    var best = getBest(subj, ch);
+    return '<section class="quiz-card"><div class="rec-head" style="margin:0"><span class="rec-icon quiz-icon">' + quizSvg + '</span>' +
+      '<div style="flex:1;min-width:140px"><div class="rec-title">' + t.chapterQuiz + '</div><div class="rec-meta">' + qCount(c.quiz.length) +
+      (best ? '<span class="best">' + t.best + ': ' + num(best.score) + '/' + num(best.total) + '</span>' : '') + '</div></div>' +
+      '<a class="btn primary" href="#' + subj + '-' + ch + '-quiz">' + (best ? t.retake : t.startQuiz) + '</a></div></section>';
+  }
+  function renderQuiz(subj, ch, t){
+    var c = SUBJ[subj].items[ch-1], qs = c.quiz;
+    if (!quizState || quizState.ch !== ch || quizState.subj !== subj){
+      var a = []; for (var k = 0; k < qs.length; k++) a.push(-1);
+      quizState = {subj:subj, ch:ch, i:0, ans:a, done:false, err:false, entering:true, barPct:0};
+    }
+    var s = quizState;
+    var head = '<a class="crumb" href="#' + subj + '-' + ch + '">' + backSvg + label(c) + '</a>';
+    if (s.done){
+      var score = 0; qs.forEach(function(q, i){ if (s.ans[i] === q.a) score++; });
+      var pct = Math.round(score / qs.length * 100);
+      var review = qs.map(function(q, i){
+        var ok = s.ans[i] === q.a;
+        return '<li class="rv ' + (ok ? 'ok' : 'no') + '"><div class="rv-q" lang="ar" dir="rtl"><span class="rv-mark">' + (ok ? '✓' : '✗') + '</span><span>' + num(i+1) + '. ' + q.q + '</span></div>' +
+          (ok ? '<div class="rv-a" lang="ar" dir="rtl">' + q.o[q.a] + '</div>'
+              : '<div class="rv-a wrong">' + t.yourAnswer + ': <span lang="ar" dir="rtl">' + q.o[s.ans[i]] + '</span></div><div class="rv-a">' + t.correctAnswer + ': <span lang="ar" dir="rtl">' + q.o[q.a] + '</span></div>') +
+          '</li>';
+      }).join("");
+      main.innerHTML = head +
+        '<section class="score-card"><div class="score">' + num(score) + ' / ' + num(qs.length) + '</div><div class="score-pct">' + num(pct) + t.pctSign + '</div></section>' +
+        '<h2 class="rv-title">' + t.review + '</h2><ol class="rv-list">' + review + '</ol>' +
+        '<div class="quiz-nav"><button type="button" class="btn" data-q="retry">' + t.retryQuiz + '</button><a class="btn primary" href="#' + subj + '-' + ch + '">' + t.backToChapter + '</a></div>';
+      return;
+    }
+    var q = qs[s.i];
+    var picked = s.ans[s.i], answered = picked >= 0;
+    var opts = q.o.map(function(o, j){
+      var cls = "opt";
+      if (answered){
+        if (j === q.a) cls += " right" + (j === picked ? " picked" : "");
+        else if (j === picked) cls += " wrong";
+        else cls += " dim";
+      }
+      return '<button type="button" class="' + cls + '" data-opt="' + j + '"' + (answered ? ' aria-disabled="true"' : '') + '><span class="radio" aria-hidden="true"></span><span>' + o + '</span></button>';
+    }).join("");
+    var fb = !answered ? '<p class="q-feedback" role="status"></p>'
+      : picked === q.a ? '<p class="q-feedback ok" role="status">🎉 ' + t.correct + '</p>'
+      : '<p class="q-feedback bad" role="status">😔 ' + t.wrongMsg + '</p>';
+    var target = (s.i+1) / qs.length * 100;
+    var from = (s.barPct == null) ? target : s.barPct;
+    var enter = s.entering; s.entering = false;
+    main.innerHTML = head +
+      '<div class="q-progress"><span>' + t.question + ' ' + num(s.i+1) + ' ' + t.of + ' ' + num(qs.length) + '</span><div class="bar"><i id="qbar" style="width:' + from + '%"></i></div></div>' +
+      '<section class="q-card' + (enter ? ' enter' : '') + '" id="qcard"><h2 class="q-text" lang="ar" dir="rtl">' + q.q + '</h2><div class="opts" lang="ar" dir="rtl">' + opts + '</div>' + fb + '</section>';
+    s.barPct = target;
+    if (from !== target){
+      var bar = document.getElementById("qbar");
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ bar.style.width = target + "%"; }); });
+    }
+  }
+  function reveal(s, qs){
+    var card = document.getElementById("qcard"); if (!card){ render(); return; }
+    var q = qs[s.i], picked = s.ans[s.i], t = T[lang];
+    card.classList.remove("enter");
+    card.querySelectorAll(".opt").forEach(function(b){
+      var j = +b.dataset.opt;
+      b.setAttribute("aria-disabled", "true");
+      if (j === q.a){ b.classList.add("right"); if (j === picked) b.classList.add("picked"); }
+      else if (j === picked) b.classList.add("wrong");
+      else b.classList.add("dim");
+    });
+    var fb = card.querySelector(".q-feedback");
+    if (fb){
+      fb.className = "q-feedback " + (picked === q.a ? "ok" : "bad");
+      fb.textContent = picked === q.a ? "\ud83c\udf89 " + t.correct : "\ud83d\ude14 " + t.wrongMsg;
+    }
+  }
+  var quizTimer = null;
+  function reduceMotion(){ return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); }
+  function burst(){
+    var card = document.getElementById("qcard"); if (!card) return;
+    var opt = card.querySelector(".opt.right");
+    var y = opt ? opt.offsetTop + opt.offsetHeight / 2 : card.offsetHeight / 2;
+    var colors = ["#C9A24B","#0F6B57","#5CC4A6","#E8C766","#1E7F4F"];
+    var box = document.createElement("div"); box.className = "confetti"; box.setAttribute("aria-hidden","true");
+    for (var i = 0; i < 24; i++){
+      var p = document.createElement("i");
+      var ang = Math.random() * Math.PI * 2, d = 60 + Math.random() * 100;
+      p.style.cssText = "--x:" + Math.round(15 + Math.random() * 70) + "%;--y:" + Math.round(y) + "px;--dx:" + Math.round(Math.cos(ang) * d) + "px;--dy:" + Math.round(Math.sin(ang) * d - 50) + "px;--r:" + Math.round(Math.random() * 540) + "deg;background:" + colors[i % colors.length];
+      box.appendChild(p);
+    }
+    card.appendChild(box);
+    setTimeout(function(){ if (box.parentNode) box.parentNode.removeChild(box); }, 1300);
+  }
+  main.addEventListener("click", function(e){
+    if (!quizState) return;
+    var o = e.target.closest("[data-opt]");
+    if (o && !quizState.done){
+      var s = quizState, qs = SUBJ[s.subj].items[s.ch-1].quiz;
+      if (s.ans[s.i] >= 0) return;
+      s.ans[s.i] = +o.dataset.opt;
+      var ok = s.ans[s.i] === qs[s.i].a;
+      reveal(s, qs);
+      if (ok && !reduceMotion()) burst();
+      clearTimeout(quizTimer);
+      quizTimer = setTimeout(function(){
+        if (quizState !== s) return;
+        var go = function(){
+          if (quizState !== s) return;
+          if (s.i < qs.length - 1){ s.i++; s.entering = true; }
+          else {
+            s.done = true;
+            var sc = 0; qs.forEach(function(q, i){ if (s.ans[i] === q.a) sc++; });
+            setBest(s.subj, s.ch, sc, qs.length);
+          }
+          render(); window.scrollTo(0,0);
+        };
+        var card = document.getElementById("qcard");
+        if (card && !reduceMotion()){ card.classList.add("leave"); quizTimer = setTimeout(go, 260); }
+        else go();
+      }, ok ? 1500 : 2400);
+      return;
+    }
+    var b = e.target.closest("[data-q]"); if (!b) return;
+    if (b.dataset.q === "retry"){ clearTimeout(quizTimer); quizState = null; render(); window.scrollTo(0,0); }
+  });
+  var bookDoc = null, bookObserver = null, pdfjsPromise = null;
+  function loadPdfJs(){
+    if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+    if (pdfjsPromise) return pdfjsPromise;
+    pdfjsPromise = new Promise(function(res, rej){
+      var s = document.createElement("script");
+      s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+      s.onload = function(){
+        var lib = window.pdfjsLib || window["pdfjs-dist/build/pdf"];
+        if (!lib){ pdfjsPromise = null; rej(new Error("pdfjs")); return; }
+        lib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        res(lib);
+      };
+      s.onerror = function(){ pdfjsPromise = null; rej(new Error("pdfjs")); };
+      document.head.appendChild(s);
+    });
+    return pdfjsPromise;
+  }
+  function renderBook(t, key){
+    var b = DOCS[key]; bookDoc = window.__bookDocs && window.__bookDocs[key] || null;
+    main.innerHTML = '<a class="crumb" href="#' + b.subj + '">' + backSvg + t[b.subj] + '</a>' +
+      '<section class="page-head"><h1 style="font-size:26px"><span dir="auto">' + b.title + '</span></h1><p><span dir="auto">' + (b.author || '') + '</span></p><div class="rule"></div></section>' +
+      '<div class="reader-bar"><span>' + num(b.pages) + t.pagesLabel + '</span><button type="button" class="btn sm primary" data-dl="' + key + '">' + t.download + '</button></div>' +
+      '<div class="pages" id="pages"><p class="reader-msg"><span class="spin" aria-hidden="true"></span>' + t.loadingBook + '</p></div>';
+    var token = {}; renderBook.token = token;
+    (bookDoc ? Promise.resolve(bookDoc) : loadPdfJs().then(function(lib){ return lib.getDocument({url: b.src, disableFontFace: true, isEvalSupported: false, useSystemFonts: false}).promise; }))
+      .then(function(pdf){ window.__bookDocs = window.__bookDocs || {}; window.__bookDocs[key] = pdf; if (renderBook.token === token) bookDoc = pdf; return pdf.getPage(1).then(function(p){ var vp = p.getViewport({scale:1}); return {pdf:pdf, ratio: vp.width / vp.height}; }); })
+      .then(function(r){
+        if (renderBook.token !== token) return;
+        var box = document.getElementById("pages"); if (!box) return;
+        var html = "";
+        for (var i = 1; i <= r.pdf.numPages; i++) html += '<div class="page" role="img" aria-label="' + T[lang].pageLabel + ' ' + num(i) + '" data-n="' + i + '" style="aspect-ratio:' + r.ratio.toFixed(4) + '"><span class="pn">' + num(i) + '</span></div>';
+        box.innerHTML = html;
+        if (bookObserver) bookObserver.disconnect();
+        bookObserver = new IntersectionObserver(function(entries){
+          entries.forEach(function(en){ if (en.isIntersecting) drawPage(en.target); else clearPage(en.target); });
+        }, {rootMargin: "1200px 0px"});
+        box.querySelectorAll(".page").forEach(function(el){ bookObserver.observe(el); });
+      })
+      .catch(function(){
+        if (renderBook.token !== token) return;
+        var box = document.getElementById("pages");
+        if (box) box.innerHTML = '<p class="reader-msg">' + T[lang].bookErr + '</p>';
+      });
+  }
+  function drawPage(el){
+    if (el.dataset.state || !bookDoc) return;
+    el.dataset.state = "loading";
+    var gen = el._gen = (el._gen || 0) + 1;
+    bookDoc.getPage(+el.dataset.n).then(function(page){
+      if (el._gen !== gen) return;
+      var w = el.clientWidth || 600, dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var base = page.getViewport({scale:1});
+      var vp = page.getViewport({scale: (w * dpr) / base.width});
+      var c = document.createElement("canvas");
+      c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
+      el.insertBefore(c, el.firstChild);
+      el._task = page.render({canvasContext: c.getContext("2d"), viewport: vp});
+      return el._task.promise.then(function(){ if (el._gen === gen) el.dataset.state = "done"; });
+    }).catch(function(){ if (el._gen === gen) delete el.dataset.state; });
+  }
+  function clearPage(el){
+    if (!el.dataset.state) return;
+    el._gen = (el._gen || 0) + 1;
+    if (el._task){ try { el._task.cancel(); } catch(e){} el._task = null; }
+    var c = el.querySelector("canvas"); if (c){ c.width = 0; c.height = 0; el.removeChild(c); }
+    delete el.dataset.state;
+  }
+  function lsGet(k){ try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch(e){ return null; } }
+  function lsSet(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+  function recIndex(){
+    var out = [];
+    Object.keys(SUBJ).forEach(function(sj){ SUBJ[sj].items.forEach(function(c, i){ (c.recs || []).forEach(function(r, j){ out.push({subj:sj, ch:i+1, part:j, src:r.src, c:c}); }); }); });
+    return out;
+  }
+  function isDone(src){ var p = lsGet("listen:" + src); return !!(p && p.done); }
+  function saveListen(a, ended){
+    var src = a.getAttribute("src"); if (!src || !a.duration) return;
+    var p = lsGet("listen:" + src) || {};
+    p.pos = a.currentTime; p.dur = a.duration;
+    if (ended || a.currentTime / a.duration >= 0.9) p.done = true;
+    lsSet("listen:" + src, p);
+    var info = recIndex().filter(function(r){ return r.src === src; })[0];
+    if (info) lsSet("last", {src:src, subj:info.subj, ch:info.ch, part:info.part});
+  }
+  var lastSave = 0;
+  document.addEventListener("timeupdate", function(e){ var a = e.target; if (!a || a.tagName !== "AUDIO" || a.paused) return; var now = Date.now(); if (now - lastSave < 4000) return; lastSave = now; saveListen(a, false); }, true);
+  document.addEventListener("pause", function(e){ if (e.target && e.target.tagName === "AUDIO") saveListen(e.target, false); }, true);
+  document.addEventListener("ended", function(e){ if (e.target && e.target.tagName === "AUDIO") saveListen(e.target, true); }, true);
+  document.addEventListener("loadedmetadata", function(e){
+    var a = e.target; if (!a || a.tagName !== "AUDIO") return;
+    var p = lsGet("listen:" + a.getAttribute("src"));
+    if (p && !p.done && p.pos > 5 && p.pos < a.duration - 5) a.currentTime = p.pos;
+  }, true);
+  function pgBar(pct, name){ return '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '" aria-label="' + name + '"><i style="width:' + pct + '%"></i></div>'; }
+  function renderProgress(t){
+    var recs = recIndex(), recDone = recs.filter(function(r){ return isDone(r.src); }).length;
+    var qTaken = 0, qSum = 0, review = [];
+    var subjHtml = Object.keys(SUBJ).map(function(sj){
+      var items = SUBJ[sj].items;
+      var lecs = items.filter(function(c){ return c.recs && c.recs.length; });
+      var lecDone = lecs.filter(function(c){ return c.recs.every(function(r){ return isDone(r.src); }); }).length;
+      var pct = lecs.length ? Math.round(lecDone / lecs.length * 100) : 0;
+      var qrows = items.map(function(c, i){
+        if (!c.quiz) return "";
+        var b = getBest(sj, i+1), bp = b ? Math.round(b.score / b.total * 100) : null;
+        if (b){ qTaken++; qSum += bp; if (bp < 60) review.push({sj:sj, ch:i+1, c:c, b:b}); }
+        return '<li class="pg-q"><span>' + label(c) + '</span><span class="pg-score' + (bp !== null && bp < 60 ? ' low' : '') + '">' + (b ? num(b.score) + '/' + num(b.total) : '\u2014') + '</span></li>';
+      }).join("");
+      return '<section class="pg-card"><div class="pg-head"><h3>' + t[sj] + '</h3><span>' + num(lecDone) + ' ' + t.of + ' ' + num(lecs.length) + '</span></div>' +
+        pgBar(pct, t[sj] + ': ' + t.lecturesDone) +
+        (qrows ? '<h4 class="pg-sub">' + t.quizResults + '</h4><ul class="pg-list">' + qrows + '</ul>' : '') + '</section>';
+    }).join("");
+    var avg = qTaken ? Math.round(qSum / qTaken) : 0;
+    var html = '<section class="page-head"><h1>' + t.progress + '</h1><div class="rule"></div></section>';
+    if (!qTaken && !recs.some(function(r){ return lsGet("listen:" + r.src); })) html += '<p class="pg-empty">' + t.progressEmpty + '</p>';
+    html += '<h2 class="pg-title">' + t.overall + '</h2><div class="pg-stats">' +
+      '<div class="pg-stat"><b>' + num(qTaken) + '</b><span>' + t.quizzesTaken + '</span></div>' +
+      '<div class="pg-stat"><b>' + (qTaken ? num(avg) + t.pctSign : '\u2014') + '</b><span>' + t.avgScore + '</span></div>' +
+      '<div class="pg-stat"><b>' + num(recDone) + '/' + num(recs.length) + '</b><span>' + t.listened + '</span></div></div>';
+    var last = lsGet("last");
+    if (last && SUBJ[last.subj] && !isDone(last.src)){
+      var lc = SUBJ[last.subj].items[last.ch-1], lp = lsGet("listen:" + last.src) || {};
+      if (lc){
+        html += '<h2 class="pg-title">' + t.continueListening + '</h2><section class="pg-card"><div class="pg-row"><div class="t"><b>' + t[last.subj] + ': ' + label(lc) + (lc.recs.length > 1 ? ' (' + t.part + ' ' + num(last.part + 1) + ')' : '') + '</b><span>' + t.stoppedAt + ' ' + num(Math.floor((lp.pos || 0) / 60)) + '</span></div><a class="btn primary" href="#' + last.subj + '-' + last.ch + '">' + t.resume + '</a></div></section>';
+      }
+    }
+    if (review.length){
+      html += '<h2 class="pg-title">' + t.needsReview + '</h2>' + review.map(function(r){
+        return '<section class="pg-card"><div class="pg-row"><div class="t"><b>' + t[r.sj] + ': ' + label(r.c) + '</b><span class="pg-score low">' + num(r.b.score) + '/' + num(r.b.total) + '</span></div><a class="btn" href="#' + r.sj + '-' + r.ch + '-quiz">' + t.retake + '</a></div></section>';
+      }).join("");
+    }
+    html += subjHtml.length ? '<h2 class="pg-title">' + t.subjects + '</h2>' + subjHtml : '';
+    html += '<div class="pg-reset"><button type="button" class="btn" data-reset>' + t.resetProgress + '</button></div>';
+    main.innerHTML = html;
+  }
+  document.addEventListener("click", function(e){
+    var b = e.target.closest && e.target.closest("[data-reset]"); if (!b) return;
+    if (!b.dataset.armed){
+      b.dataset.armed = "1"; b.textContent = T[lang].resetConfirm;
+      setTimeout(function(){ if (b.isConnected){ delete b.dataset.armed; b.textContent = T[lang].resetProgress; } }, 4000);
+      return;
+    }
+    try {
+      var del = [];
+      for (var i = 0; i < localStorage.length; i++){ var k = localStorage.key(i); if (/^(listen:|quiz:|last$)/.test(k)) del.push(k); }
+      del.forEach(function(k){ localStorage.removeItem(k); });
+    } catch(err){}
+    render();
+  });
+  var dlPromise = null;
+  function getDownloads(){
+    if (!dlPromise) dlPromise = (window.claude && window.claude.use) ? Promise.resolve(window.claude.use("downloads")).catch(function(){ return null; }) : Promise.resolve(null);
+    return dlPromise;
+  }
+  document.addEventListener("click", function(e){
+    var b = e.target.closest && e.target.closest("[data-dl]"); if (!b || b.disabled) return;
+    var doc = DOCS[b.dataset.dl] || fiqhBook;
+    var t = T[lang];
+    b.disabled = true; b.textContent = t.preparing;
+    getDownloads().then(function(dl){
+      if (!dl) throw {code:"unavailable"};
+      return fetch(doc.src).then(function(r){ if (!r.ok) throw {code:"fetch"}; return r.blob(); })
+        .then(function(blob){ return dl.save({filename: doc.file, data: blob}); });
+    }).then(function(){
+      b.disabled = false; b.textContent = T[lang].download;
+    }).catch(function(err){
+      b.disabled = false; b.textContent = T[lang].download;
+      if (err && (err.code === "declined" || err.code === "rate_limited")) return;
+      var a = document.createElement("a"); a.href = doc.src; a.download = doc.file || ""; document.body.appendChild(a); a.click(); a.remove();
+    });
+  });
+  function openMenu(){ sidebar.classList.add("open"); scrim.classList.add("show"); openBtn.setAttribute("aria-expanded","true"); setTimeout(function(){ closeBtn.focus(); }, 50); }
+  function closeMenu(){ var wasOpen = sidebar.classList.contains("open"); sidebar.classList.remove("open"); scrim.classList.remove("show"); openBtn.setAttribute("aria-expanded","false"); if (wasOpen && sidebar.contains(document.activeElement) && getComputedStyle(openBtn).display !== "none") openBtn.focus(); }
+
+  openBtn.addEventListener("click", openMenu);
+  document.querySelector("[data-skip]").addEventListener("click", function(e){ e.preventDefault(); main.focus(); });
+  closeBtn.addEventListener("click", closeMenu);
+  scrim.addEventListener("click", closeMenu);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape") closeMenu(); });
+  document.querySelectorAll(".nav a").forEach(function(a){ a.addEventListener("click", closeMenu); });
+  document.querySelectorAll(".lang-switch button").forEach(function(b){
+    b.addEventListener("click", function(){
+      lang = b.dataset.lang;
+      try { localStorage.setItem("lang", lang); } catch(e){}
+      applyLang(); render();
+    });
+  });
+  window.addEventListener("hashchange", function(){ subjTab = {}; render(); window.scrollTo(0,0); });
+  applyLang(); render();
+})();
+</script>
+</body>
+</html>
