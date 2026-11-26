@@ -295,6 +295,49 @@ main{padding:32px 20px;max-width:880px}
   main{margin-inline-start:var(--sidebar-w);padding:56px 48px}
 }
 @media (prefers-reduced-motion:reduce){.sidebar,.scrim{transition:none}}
+
+/* First-visit "What's your name?" screen (full-screen welcome) */
+.welcome{
+  position:fixed;inset:0;z-index:40;overflow-y:auto;
+  display:flex;flex-direction:column;
+  background:var(--hero);color:var(--on-hero);
+  padding:calc(env(safe-area-inset-top,0px) + 12px) 20px calc(env(safe-area-inset-bottom,0px) + 28px);
+}
+.welcome[hidden]{display:none}
+body.no-scroll{overflow:hidden}
+.welcome-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}
+.welcome .brand{color:var(--on-hero)}
+.welcome .lang-switch{width:auto;background:rgba(255,255,255,.14)}
+.welcome .lang-switch button{min-height:44px;min-width:44px;padding:6px 14px;color:var(--on-hero)}
+.welcome .lang-switch button[aria-pressed="true"]{background:var(--surface);color:var(--primary)}
+.welcome-body{width:100%;max-width:440px;align-self:center;margin-top:auto;padding-top:40px}
+@media (min-width:900px){.welcome-body{margin-block:auto}}
+.welcome h1{font-family:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;font-weight:500;font-size:32px;line-height:1.35;margin:0}
+.welcome .rule{width:56px;height:3px;background:var(--gold);border-radius:2px;margin:16px 0 12px}
+.welcome-sub{margin:0 0 28px;color:var(--on-hero-muted);font-size:17px}
+.welcome label{display:block;font-weight:600;font-size:17px;margin-bottom:8px}
+.welcome input{
+  display:block;width:100%;min-height:48px;padding:10px 14px;
+  font:inherit;font-size:16px;color:var(--ink);background:var(--surface);
+  border:2px solid transparent;border-radius:12px;
+}
+.welcome input::placeholder{color:var(--muted)}
+.welcome input[aria-invalid="true"]{border-color:#FFB4A9}
+.welcome-hint{margin:8px 0 0;font-size:14px;color:var(--on-hero-muted)}
+.welcome-err{margin:8px 0 0;font-size:15px;font-weight:600;color:#FFE1DC}
+.welcome-err:empty{display:none}
+.welcome-go{display:block;width:100%;min-height:48px;margin-top:20px;border:0;border-radius:12px;background:var(--gold);color:#17312B;font-weight:600;font-size:17px;cursor:pointer}
+.welcome-go:hover{filter:brightness(1.05)}
+.welcome-cancel{display:block;margin:12px auto 0;min-height:44px;padding:0 16px;background:none;border:0;color:var(--on-hero);text-decoration:underline;cursor:pointer}
+.welcome-cancel[hidden]{display:none}
+.welcome :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+@keyframes welcomeIn{from{opacity:0;transform:translateY(12px)}}
+.welcome:not([hidden]) .welcome-body{animation:welcomeIn .35s ease}
+@media (prefers-reduced-motion:reduce){.welcome:not([hidden]) .welcome-body{animation:none}}
+.lang{flex-direction:column}
+.change-name{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:8px 14px;border:0;background:none;border-radius:999px;color:var(--primary);font-size:15px;cursor:pointer;text-align:start}
+.change-name:hover{background:var(--primary-soft)}
+.change-name[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -330,6 +373,9 @@ main{padding:32px 20px;max-width:880px}
       <span data-t="exams"></span><span class="badge nav-soon" data-t="soon"></span></a></li>
   </ul>
   <div class="lang">
+    <button type="button" class="change-name" id="changeName" hidden>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>
+      <span data-t="changeName"></span></button>
     <div class="lang-switch" role="group" aria-label="Language">
       <button data-lang="en" aria-pressed="true">English</button>
       <button data-lang="ar" aria-pressed="false">العربية</button>
@@ -339,6 +385,27 @@ main{padding:32px 20px;max-width:880px}
 
 <main id="main" tabindex="-1"></main>
 
+<div class="welcome" id="nameScreen" role="dialog" aria-modal="true" aria-labelledby="nameLabel" hidden>
+  <div class="welcome-top">
+    <span class="brand" data-t="appName"></span>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">English</button>
+      <button type="button" data-lang="ar" aria-pressed="false">العربية</button>
+    </div>
+  </div>
+  <form class="welcome-body" id="nameForm" novalidate>
+    <h1 data-t="greet"></h1>
+    <div class="rule"></div>
+    <p class="welcome-sub" data-t="welcome"></p>
+    <label for="nameInput" id="nameLabel" data-t="nameLabel"></label>
+    <input id="nameInput" name="studentName" type="text" dir="auto" autocomplete="given-name" maxlength="40" required aria-describedby="nameHint nameErr">
+    <p class="welcome-hint" id="nameHint" data-t="nameHint"></p>
+    <p class="welcome-err" id="nameErr" aria-live="assertive"></p>
+    <button type="submit" class="welcome-go" data-t="nameGo"></button>
+    <button type="button" class="welcome-cancel" id="nameCancel" data-t="nameCancel" hidden></button>
+  </form>
+</div>
+
 <script>
 (function(){
   var T = {
@@ -347,14 +414,18 @@ main{padding:32px 20px;max-width:880px}
       fiqh:"Fiqh", aqida:"Aqida", quran:"Quranic Sciences", hadith:"Hadith",
       exams:"Exams", progress:"My progress",
       greet:"Assalamu alaikum", welcome:"Welcome to Elfadela Institute",
-      empty:"No content yet.", chaptersN:" chapters", lecturesN:" lectures", chapter:"Chapter on", soon:"Coming soon", recording:"Lesson recording", part:"Part", loading:"Loading…", loadErr:"Couldn’t load", retry:"Try again", chapterQuiz:"Chapter quiz", best:"Best score", startQuiz:"Start quiz", retake:"Retake quiz", question:"Question", of:"of", next:"Next", prev:"Back", seeResult:"See result", chooseFirst:"Choose an answer first", review:"Review answers", yourAnswer:"Your answer", correctAnswer:"Correct answer", retryQuiz:"Retry", backToChapter:"Back to chapter", pctSign:"%", correct:"Correct!", book:"Course book", review:"Review", read:"Read", download:"Download", preparing:"Preparing…", pagesLabel:" pages", pageLabel:"Page", skip:"Skip to content", chaptersTab:"Chapters", lecturesTab:"Lectures", resources:"Resources", overall:"Overall", quizzesTaken:"Quizzes taken", avgScore:"Average score", listened:"Recordings completed", quizResults:"Quiz results", needsReview:"Needs review", continueListening:"Continue listening", resume:"Resume", stoppedAt:"Stopped at minute", resetProgress:"Reset my progress", resetConfirm:"Tap again to reset", progressEmpty:"Listen to a lecture or take a quiz, and your progress will show here.", lecturesDone:"lectures completed", reviewDoc:"Review", loadingBook:"Loading the book…", bookErr:"Couldn’t open the book here. Use Download instead.", wrongMsg:"Not quite", minsLabel:" min", emptyChapter:"Lessons for this chapter will appear here.", openMenu:"Open menu", closeMenu:"Close menu", nav:"Main menu"
+      empty:"No content yet.", chaptersN:" chapters", lecturesN:" lectures", chapter:"Chapter on", soon:"Coming soon", recording:"Lesson recording", part:"Part", loading:"Loading…", loadErr:"Couldn’t load", retry:"Try again", chapterQuiz:"Chapter quiz", best:"Best score", startQuiz:"Start quiz", retake:"Retake quiz", question:"Question", of:"of", next:"Next", prev:"Back", seeResult:"See result", chooseFirst:"Choose an answer first", review:"Review answers", yourAnswer:"Your answer", correctAnswer:"Correct answer", retryQuiz:"Retry", backToChapter:"Back to chapter", pctSign:"%", correct:"Correct!", book:"Course book", review:"Review", read:"Read", download:"Download", preparing:"Preparing…", pagesLabel:" pages", pageLabel:"Page", skip:"Skip to content", chaptersTab:"Chapters", lecturesTab:"Lectures", resources:"Resources", overall:"Overall", quizzesTaken:"Quizzes taken", avgScore:"Average score", listened:"Recordings completed", quizResults:"Quiz results", needsReview:"Needs review", continueListening:"Continue listening", resume:"Resume", stoppedAt:"Stopped at minute", resetProgress:"Reset my progress", resetConfirm:"Tap again to reset", progressEmpty:"Listen to a lecture or take a quiz, and your progress will show here.", lecturesDone:"lectures completed", reviewDoc:"Review", loadingBook:"Loading the book…", bookErr:"Couldn’t open the book here. Use Download instead.", wrongMsg:"Not quite", minsLabel:" min", emptyChapter:"Lessons for this chapter will appear here.", openMenu:"Open menu", closeMenu:"Close menu", nav:"Main menu",
+      nameLabel:"What’s your name?", namePh:"Your name", nameHint:"Arabic or English letters, 2–40 characters.", nameGo:"Continue", nameCancel:"Cancel", changeName:"Change name",
+      nameErrShort:"Please enter at least 2 letters.", nameErrLong:"Please use 40 characters or fewer.", nameErrChars:"Please use Arabic or English letters only."
     },
     ar:{
       appName:"معهد الفضيلة", home:"الرئيسية", subjects:"المواد", study:"الدراسة",
       fiqh:"الفقه", aqida:"العقيدة", quran:"علوم القران", hadith:"الحديث",
       exams:"الاختبارات", progress:"تقدّمي",
       greet:"السلام عليكم ورحمة الله", welcome:"أهلًا بك في معهد الفضيلة",
-      empty:"لا يوجد محتوى بعد.", chaptersN:" أبواب", lecturesN:" محاضرات", chapter:"باب", soon:"قريبًا", recording:"تسجيل الدرس", part:"الجزء", loading:"جارٍ التحميل…", loadErr:"تعذّر التحميل", retry:"إعادة المحاولة", chapterQuiz:"اختبار الباب", best:"أفضل نتيجة", startQuiz:"ابدأ الاختبار", retake:"أعد الاختبار", question:"السؤال", of:"من", next:"التالي", prev:"السابق", seeResult:"عرض النتيجة", chooseFirst:"اختر إجابة أولًا", review:"مراجعة الإجابات", yourAnswer:"إجابتك", correctAnswer:"الإجابة الصحيحة", retryQuiz:"إعادة الاختبار", backToChapter:"العودة إلى الباب", pctSign:"٪", correct:"إجابة صحيحة!", book:"كتاب المادة", review:"مراجعة", read:"قراءة", download:"تحميل", preparing:"جارٍ التجهيز…", pagesLabel:" صفحة", pageLabel:"صفحة", skip:"تخطَّ إلى المحتوى", chaptersTab:"الأبواب", lecturesTab:"المحاضرات", resources:"المصادر", overall:"نظرة عامة", quizzesTaken:"اختبارات منجزة", avgScore:"متوسط النتائج", listened:"تسجيلات مكتملة", quizResults:"نتائج الاختبارات", needsReview:"تحتاج مراجعة", continueListening:"أكمل الاستماع", resume:"استئناف", stoppedAt:"توقفت عند الدقيقة", resetProgress:"مسح تقدّمي", resetConfirm:"اضغط مرة أخرى للمسح", progressEmpty:"استمع إلى محاضرة أو أجرِ اختبارًا، وسيظهر تقدّمك هنا.", lecturesDone:"محاضرات مكتملة", reviewDoc:"مراجعة", loadingBook:"جارٍ تحميل الكتاب…", bookErr:"تعذّر فتح الكتاب هنا. استخدم زر التحميل.", wrongMsg:"إجابة خاطئة", minsLabel:" دقيقة", emptyChapter:"ستظهر دروس هذا الباب هنا.", openMenu:"فتح القائمة", closeMenu:"إغلاق القائمة", nav:"القائمة الرئيسية"
+      empty:"لا يوجد محتوى بعد.", chaptersN:" أبواب", lecturesN:" محاضرات", chapter:"باب", soon:"قريبًا", recording:"تسجيل الدرس", part:"الجزء", loading:"جارٍ التحميل…", loadErr:"تعذّر التحميل", retry:"إعادة المحاولة", chapterQuiz:"اختبار الباب", best:"أفضل نتيجة", startQuiz:"ابدأ الاختبار", retake:"أعد الاختبار", question:"السؤال", of:"من", next:"التالي", prev:"السابق", seeResult:"عرض النتيجة", chooseFirst:"اختر إجابة أولًا", review:"مراجعة الإجابات", yourAnswer:"إجابتك", correctAnswer:"الإجابة الصحيحة", retryQuiz:"إعادة الاختبار", backToChapter:"العودة إلى الباب", pctSign:"٪", correct:"إجابة صحيحة!", book:"كتاب المادة", review:"مراجعة", read:"قراءة", download:"تحميل", preparing:"جارٍ التجهيز…", pagesLabel:" صفحة", pageLabel:"صفحة", skip:"تخطَّ إلى المحتوى", chaptersTab:"الأبواب", lecturesTab:"المحاضرات", resources:"المصادر", overall:"نظرة عامة", quizzesTaken:"اختبارات منجزة", avgScore:"متوسط النتائج", listened:"تسجيلات مكتملة", quizResults:"نتائج الاختبارات", needsReview:"تحتاج مراجعة", continueListening:"أكمل الاستماع", resume:"استئناف", stoppedAt:"توقفت عند الدقيقة", resetProgress:"مسح تقدّمي", resetConfirm:"اضغط مرة أخرى للمسح", progressEmpty:"استمع إلى محاضرة أو أجرِ اختبارًا، وسيظهر تقدّمك هنا.", lecturesDone:"محاضرات مكتملة", reviewDoc:"مراجعة", loadingBook:"جارٍ تحميل الكتاب…", bookErr:"تعذّر فتح الكتاب هنا. استخدم زر التحميل.", wrongMsg:"إجابة خاطئة", minsLabel:" دقيقة", emptyChapter:"ستظهر دروس هذا الباب هنا.", openMenu:"فتح القائمة", closeMenu:"إغلاق القائمة", nav:"القائمة الرئيسية",
+      nameLabel:"ما اسمك؟", namePh:"اسمك", nameHint:"حروف عربية أو إنجليزية، من ٢ إلى ٤٠ حرفًا.", nameGo:"متابعة", nameCancel:"إلغاء", changeName:"تغيير الاسم",
+      nameErrShort:"من فضلك اكتب حرفين على الأقل.", nameErrLong:"من فضلك لا تتجاوز ٤٠ حرفًا.", nameErrChars:"من فضلك استخدم حروفًا عربية أو إنجليزية فقط."
     }
   };
   var views = ["home","fiqh","fiqh-book","aqida","quran","quran-book","quran-review","aqida-book","aqida-review","hadith","exams","progress"];
@@ -526,6 +597,7 @@ main{padding:32px 20px;max-width:880px}
     document.querySelectorAll(".lang-switch button").forEach(function(b){
       b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
     });
+    var ni = document.getElementById("nameInput"); if (ni) ni.placeholder = t.namePh;
   }
   function render(){
     var t = T[lang];
@@ -926,7 +998,73 @@ main{padding:32px 20px;max-width:880px}
     });
   });
   window.addEventListener("hashchange", function(){ subjTab = {}; render(); window.scrollTo(0,0); });
+
+  // ---- Student name: the one place the name is stored/read. Reuse getStudentName() (greeting, analytics). ----
+  var NAME_KEY = "studentName";
+  var student = {name:"", canSave:false};
+  try {
+    localStorage.setItem("__ls_test", "1"); localStorage.removeItem("__ls_test");
+    student.canSave = true;
+    student.name = localStorage.getItem(NAME_KEY) || "";
+  } catch(e){}
+  function getStudentName(){ return student.name; }
+  function setStudentName(n){ student.name = n; try { localStorage.setItem(NAME_KEY, n); } catch(e){} }
+
+  var NAME_LETTERS = "A-Za-zء-غـ-ْٰ-ۓۺ-ۼ";
+  var NAME_RE = new RegExp("^[" + NAME_LETTERS + "]+( [" + NAME_LETTERS + "]+)*$");
+  function cleanName(v){ return String(v || "").replace(/\s+/g, " ").trim(); }
+  function nameError(n){
+    if (n.length < 2) return "nameErrShort";
+    if (n.length > 40) return "nameErrLong";
+    if (!NAME_RE.test(n)) return "nameErrChars";
+    return "";
+  }
+
+  var nameScreen = document.getElementById("nameScreen");
+  var nameForm = document.getElementById("nameForm");
+  var nameInput = document.getElementById("nameInput");
+  var nameErr = document.getElementById("nameErr");
+  var nameCancel = document.getElementById("nameCancel");
+  var changeNameBtn = document.getElementById("changeName");
+  var nameBehind = [document.querySelector("[data-skip]"), document.querySelector(".topbar"), sidebar, scrim, main];
+  var nameIsChange = false;
+
+  function showNameError(key){
+    if (key){ nameErr.dataset.t = key; nameErr.textContent = T[lang][key]; nameInput.setAttribute("aria-invalid", "true"); }
+    else { delete nameErr.dataset.t; nameErr.textContent = ""; nameInput.removeAttribute("aria-invalid"); }
+  }
+  function openNameScreen(isChange){
+    nameIsChange = !!isChange;
+    nameCancel.hidden = !nameIsChange;
+    nameInput.value = nameIsChange ? getStudentName() : "";
+    showNameError("");
+    nameBehind.forEach(function(el){ if (el) el.setAttribute("inert", ""); });
+    document.body.classList.add("no-scroll");
+    nameScreen.hidden = false;
+    setTimeout(function(){ nameInput.focus(); }, 50);
+  }
+  function closeNameScreen(){
+    nameScreen.hidden = true;
+    nameBehind.forEach(function(el){ if (el) el.removeAttribute("inert"); });
+    document.body.classList.remove("no-scroll");
+    (nameIsChange ? openBtn : main).focus();
+  }
+  nameForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    var n = cleanName(nameInput.value);
+    var err = nameError(n);
+    if (err){ showNameError(err); nameInput.focus(); return; }
+    setStudentName(n);
+    closeNameScreen();
+  });
+  nameInput.addEventListener("input", function(){ if (nameErr.textContent && !nameError(cleanName(nameInput.value))) showNameError(""); });
+  nameCancel.addEventListener("click", closeNameScreen);
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !nameScreen.hidden && nameIsChange) closeNameScreen(); });
+  changeNameBtn.hidden = !student.canSave;
+  changeNameBtn.addEventListener("click", function(){ closeMenu(); openNameScreen(true); });
+
   applyLang(); render();
+  if (student.canSave && !getStudentName()) openNameScreen(false);
 })();
 </script>
 </body>
