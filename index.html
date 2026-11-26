@@ -465,7 +465,9 @@ body.no-scroll{overflow:hidden}
   document.addEventListener("click", function(e){
     var b = e.target.closest && e.target.closest("#main [data-tab]"); if (!b) return;
     var key = location.hash.replace("#",""); if (!SUBJ[key]) return;
+    var prevTab = subjTab[key] || "list";
     subjTab[key] = b.dataset.tab; render();
+    if (b.dataset.tab !== prevTab) mp(function(m){ m.track("Tab Switched", {"Subject": T.en[key], "Tab": b.dataset.tab === "res" ? "Resources" : "Lectures"}); });
   });
   function bookCard(t, key){
     var b = DOCS[key];
@@ -1010,6 +1012,8 @@ body.no-scroll{overflow:hidden}
   document.querySelectorAll(".nav a").forEach(function(a){ a.addEventListener("click", closeMenu); });
   document.querySelectorAll(".lang-switch button").forEach(function(b){
     b.addEventListener("click", function(){
+      var prevLang = lang;
+      if (b.dataset.lang !== prevLang) mp(function(m){ m.track("Language Switched", {"From": prevLang, "To": b.dataset.lang}); });
       lang = b.dataset.lang;
       try { localStorage.setItem("lang", lang); } catch(e){}
       applyLang(); render();
@@ -1110,6 +1114,7 @@ body.no-scroll{overflow:hidden}
     var err = nameError(n);
     if (err){ showNameError(err); nameInput.focus(); return; }
     setStudentName(n);
+    mp(function(m){ m.track("Name Submitted"); });
     updateNameUI(); render();
     closeNameScreen();
   });
