@@ -21,7 +21,7 @@ Hosted on GitHub Pages. No build step, no backend.
 - Ask clarifying questions before building anything new.
 - When offering design/style options, show visual previews before applying.
 - Keep replies concise and direct.
-- Default language is English; Arabic switches the layout to RTL. Quiz content always stays Arabic.
+- Default language is Arabic (RTL); English switches the layout to LTR. A language the student picked is remembered on their device. Quiz content always stays Arabic.
 - Subject pages open on the "المحاضرات / Lectures" tab every time (don't remember the last tab).
 
 ## Adding media
