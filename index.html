@@ -322,8 +322,8 @@ body.no-scroll{overflow:hidden}
   border:2px solid transparent;border-radius:12px;
 }
 .welcome input::placeholder{color:var(--muted)}
+[dir="rtl"] .welcome input:placeholder-shown{direction:rtl;text-align:right}
 .welcome input[aria-invalid="true"]{border-color:#FFB4A9}
-.welcome-hint{margin:8px 0 0;font-size:14px;color:var(--on-hero-muted)}
 .welcome-err{margin:8px 0 0;font-size:15px;font-weight:600;color:#FFE1DC}
 .welcome-err:empty{display:none}
 .welcome-go{display:block;width:100%;min-height:48px;margin-top:20px;border:0;border-radius:12px;background:var(--gold);color:#17312B;font-weight:600;font-size:17px;cursor:pointer}
@@ -398,8 +398,7 @@ body.no-scroll{overflow:hidden}
     <div class="rule"></div>
     <p class="welcome-sub" data-t="welcome"></p>
     <label for="nameInput" id="nameLabel" data-t="nameLabel"></label>
-    <input id="nameInput" name="studentName" type="text" dir="auto" autocomplete="given-name" maxlength="40" required aria-describedby="nameHint nameErr">
-    <p class="welcome-hint" id="nameHint" data-t="nameHint"></p>
+    <input id="nameInput" name="studentName" type="text" dir="auto" autocomplete="given-name" maxlength="40" required aria-describedby="nameErr">
     <p class="welcome-err" id="nameErr" aria-live="assertive"></p>
     <button type="submit" class="welcome-go" data-t="nameGo"></button>
     <button type="button" class="welcome-cancel" id="nameCancel" data-t="nameCancel" hidden></button>
@@ -415,7 +414,7 @@ body.no-scroll{overflow:hidden}
       exams:"Exams", progress:"My progress",
       greet:"Assalamu alaikum", welcome:"Welcome to Elfadela Institute",
       empty:"No content yet.", chaptersN:" chapters", lecturesN:" lectures", chapter:"Chapter on", soon:"Coming soon", recording:"Lesson recording", part:"Part", loading:"Loading…", loadErr:"Couldn’t load", retry:"Try again", chapterQuiz:"Chapter quiz", best:"Best score", startQuiz:"Start quiz", retake:"Retake quiz", question:"Question", of:"of", next:"Next", prev:"Back", seeResult:"See result", chooseFirst:"Choose an answer first", review:"Review answers", yourAnswer:"Your answer", correctAnswer:"Correct answer", retryQuiz:"Retry", backToChapter:"Back to chapter", pctSign:"%", correct:"Correct!", book:"Course book", review:"Review", read:"Read", download:"Download", preparing:"Preparing…", pagesLabel:" pages", pageLabel:"Page", skip:"Skip to content", chaptersTab:"Chapters", lecturesTab:"Lectures", resources:"Resources", overall:"Overall", quizzesTaken:"Quizzes taken", avgScore:"Average score", listened:"Recordings completed", quizResults:"Quiz results", needsReview:"Needs review", continueListening:"Continue listening", resume:"Resume", stoppedAt:"Stopped at minute", resetProgress:"Reset my progress", resetConfirm:"Tap again to reset", progressEmpty:"Listen to a lecture or take a quiz, and your progress will show here.", lecturesDone:"lectures completed", reviewDoc:"Review", loadingBook:"Loading the book…", bookErr:"Couldn’t open the book here. Use Download instead.", wrongMsg:"Not quite", minsLabel:" min", emptyChapter:"Lessons for this chapter will appear here.", openMenu:"Open menu", closeMenu:"Close menu", nav:"Main menu",
-      nameLabel:"What’s your name?", namePh:"Your name", nameHint:"Arabic or English letters, 2–40 characters.", nameGo:"Continue", nameCancel:"Cancel", changeName:"Change name",
+      nameLabel:"What’s your name?", namePh:"Your name", nameGo:"Continue", nameCancel:"Cancel", changeName:"Change name",
       nameErrShort:"Please enter at least 2 letters.", nameErrLong:"Please use 40 characters or fewer.", nameErrChars:"Please use Arabic or English letters only."
     },
     ar:{
@@ -424,7 +423,7 @@ body.no-scroll{overflow:hidden}
       exams:"الاختبارات", progress:"تقدّمي",
       greet:"السلام عليكم ورحمة الله", welcome:"أهلًا بك في معهد الفضيلة",
       empty:"لا يوجد محتوى بعد.", chaptersN:" أبواب", lecturesN:" محاضرات", chapter:"باب", soon:"قريبًا", recording:"تسجيل الدرس", part:"الجزء", loading:"جارٍ التحميل…", loadErr:"تعذّر التحميل", retry:"إعادة المحاولة", chapterQuiz:"اختبار الباب", best:"أفضل نتيجة", startQuiz:"ابدأ الاختبار", retake:"أعد الاختبار", question:"السؤال", of:"من", next:"التالي", prev:"السابق", seeResult:"عرض النتيجة", chooseFirst:"اختر إجابة أولًا", review:"مراجعة الإجابات", yourAnswer:"إجابتك", correctAnswer:"الإجابة الصحيحة", retryQuiz:"إعادة الاختبار", backToChapter:"العودة إلى الباب", pctSign:"٪", correct:"إجابة صحيحة!", book:"كتاب المادة", review:"مراجعة", read:"قراءة", download:"تحميل", preparing:"جارٍ التجهيز…", pagesLabel:" صفحة", pageLabel:"صفحة", skip:"تخطَّ إلى المحتوى", chaptersTab:"الأبواب", lecturesTab:"المحاضرات", resources:"المصادر", overall:"نظرة عامة", quizzesTaken:"اختبارات منجزة", avgScore:"متوسط النتائج", listened:"تسجيلات مكتملة", quizResults:"نتائج الاختبارات", needsReview:"تحتاج مراجعة", continueListening:"أكمل الاستماع", resume:"استئناف", stoppedAt:"توقفت عند الدقيقة", resetProgress:"مسح تقدّمي", resetConfirm:"اضغط مرة أخرى للمسح", progressEmpty:"استمع إلى محاضرة أو أجرِ اختبارًا، وسيظهر تقدّمك هنا.", lecturesDone:"محاضرات مكتملة", reviewDoc:"مراجعة", loadingBook:"جارٍ تحميل الكتاب…", bookErr:"تعذّر فتح الكتاب هنا. استخدم زر التحميل.", wrongMsg:"إجابة خاطئة", minsLabel:" دقيقة", emptyChapter:"ستظهر دروس هذا الباب هنا.", openMenu:"فتح القائمة", closeMenu:"إغلاق القائمة", nav:"القائمة الرئيسية",
-      nameLabel:"ما اسمك؟", namePh:"اسمك", nameHint:"حروف عربية أو إنجليزية، من ٢ إلى ٤٠ حرفًا.", nameGo:"متابعة", nameCancel:"إلغاء", changeName:"تغيير الاسم",
+      nameLabel:"ما اسمك؟", namePh:"اسمك", nameGo:"متابعة", nameCancel:"إلغاء", changeName:"تغيير الاسم",
       nameErrShort:"من فضلك اكتب حرفين على الأقل.", nameErrLong:"من فضلك لا تتجاوز ٤٠ حرفًا.", nameErrChars:"من فضلك استخدم حروفًا عربية أو إنجليزية فقط."
     }
   };
