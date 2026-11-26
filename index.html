@@ -7,6 +7,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Mixpanel: official snippet (mixpanel-browser 2.86.0) -->
+<script>
+(function(e,c){if(!c.__SV){var l,h;window.mixpanel=c;c._i=[];c.init=function(q,r,f){function t(d,a){var g=a.split(".");2==g.length&&(d=d[g[0]],a=g[1]);d[a]=function(){d.push([a].concat(Array.prototype.slice.call(arguments,0)))}}var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";b.people=b.people||[];b.toString=function(d){var a="mixpanel";"mixpanel"!==f&&(a+="."+f);d||(a+=" (stub)");return a};b.people.toString=function(){return b.toString(1)+".people (stub)"};l="disable time_event track track_pageview track_links track_forms track_with_groups add_group set_group remove_group register register_once alias unregister identify name_tag set_config reset opt_in_tracking opt_out_tracking has_opted_in_tracking has_opted_out_tracking clear_opt_in_out_tracking start_batch_senders start_session_recording stop_session_recording people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user people.remove".split(" ");
+for(h=0;h<l.length;h++)t(b,l[h]);var n="set set_once union unset remove delete".split(" ");b.get_group=function(){function d(p){a[p]=function(){b.push([g,[p].concat(Array.prototype.slice.call(arguments,0))])}}for(var a={},g=["get_group"].concat(Array.prototype.slice.call(arguments,0)),m=0;m<n.length;m++)d(n[m]);return a};c._i.push([q,r,f])};c.__SV=1.2;var k=e.createElement("script");k.type="text/javascript";k.async=!0;k.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===
+e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=e.getElementsByTagName("script")[0];e.parentNode.insertBefore(k,e)}})(document,window.mixpanel||[]);
+try {
+  mixpanel.init("1dab41a42c751b02eab8a527bf9559e4", {
+    debug: /^(localhost|127\.0\.0\.1)$/.test(location.hostname), // console logging only when testing locally
+    track_pageview: false,   // page views are tracked manually ("Page Viewed")
+    autocapture: false,
+    persistence: "localStorage", // github.io is a public suffix, so cookies can't hold the device ID there
+    loaded: function(m){ var q = window.__mpOnLoad || []; window.__mpOnLoad = null; q.forEach(function(fn){ try { fn(m); } catch(e){} }); }
+  });
+} catch(e){}
+</script>
 <style>
 :root{
   --bg:#F5F8F6; --surface:#FFFFFF; --ink:#17312B; --muted:#56706A;
@@ -328,16 +343,19 @@ body.no-scroll{overflow:hidden}
 .welcome-err:empty{display:none}
 .welcome-go{display:block;width:100%;min-height:48px;margin-top:20px;border:0;border-radius:12px;background:var(--gold);color:#17312B;font-weight:600;font-size:17px;cursor:pointer}
 .welcome-go:hover{filter:brightness(1.05)}
-.welcome-cancel{display:block;margin:12px auto 0;min-height:44px;padding:0 16px;background:none;border:0;color:var(--on-hero);text-decoration:underline;cursor:pointer}
-.welcome-cancel[hidden]{display:none}
 .welcome :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 @keyframes welcomeIn{from{opacity:0;transform:translateY(12px)}}
 .welcome:not([hidden]) .welcome-body{animation:welcomeIn .35s ease}
 @media (prefers-reduced-motion:reduce){.welcome:not([hidden]) .welcome-body{animation:none}}
-.lang{flex-direction:column}
-.change-name{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:8px 14px;border:0;background:none;border-radius:999px;color:var(--primary);font-size:15px;cursor:pointer;text-align:start}
-.change-name:hover{background:var(--primary-soft)}
-.change-name[hidden]{display:none}
+/* Student name chip (Home greeting + top of menu) */
+.name-chip{display:inline-flex;align-items:center;gap:8px;max-width:100%;min-width:0;border-radius:999px;padding-block:4px;padding-inline:4px 14px;font-weight:600;font-size:15px;line-height:1.3}
+.name-chip .av{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:14px;line-height:1}
+.name-chip .nm{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.greeting .name-chip{background:rgba(255,255,255,.14);color:var(--on-hero);margin-bottom:14px}
+.greeting .name-chip .av{background:var(--gold);color:#17312B}
+.side-chip{flex:0 1 auto;background:var(--primary-soft);color:var(--primary)}
+.side-chip .av{background:var(--primary);color:var(--surface)}
+.side-chip[hidden],.sidebar-head .brand[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -355,6 +373,7 @@ body.no-scroll{overflow:hidden}
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-head">
     <span class="brand" data-t="appName"></span>
+    <span class="name-chip side-chip" id="menuName" hidden><span class="av" aria-hidden="true"></span><span class="nm"></span></span>
     <button class="icon-btn close-btn" id="closeMenu">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
@@ -373,9 +392,6 @@ body.no-scroll{overflow:hidden}
       <span data-t="exams"></span><span class="badge nav-soon" data-t="soon"></span></a></li>
   </ul>
   <div class="lang">
-    <button type="button" class="change-name" id="changeName" hidden>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>
-      <span data-t="changeName"></span></button>
     <div class="lang-switch" role="group" aria-label="Language">
       <button data-lang="en" aria-pressed="true">English</button>
       <button data-lang="ar" aria-pressed="false">العربية</button>
@@ -401,7 +417,6 @@ body.no-scroll{overflow:hidden}
     <input id="nameInput" name="studentName" type="text" dir="auto" autocomplete="given-name" maxlength="40" required aria-describedby="nameErr">
     <p class="welcome-err" id="nameErr" aria-live="assertive"></p>
     <button type="submit" class="welcome-go" data-t="nameGo"></button>
-    <button type="button" class="welcome-cancel" id="nameCancel" data-t="nameCancel" hidden></button>
   </form>
 </div>
 
@@ -414,7 +429,7 @@ body.no-scroll{overflow:hidden}
       exams:"Exams", progress:"My progress",
       greet:"Assalamu alaikum", welcome:"Welcome to Elfadela Institute",
       empty:"No content yet.", chaptersN:" chapters", lecturesN:" lectures", chapter:"Chapter on", soon:"Coming soon", recording:"Lesson recording", part:"Part", loading:"Loading…", loadErr:"Couldn’t load", retry:"Try again", chapterQuiz:"Chapter quiz", best:"Best score", startQuiz:"Start quiz", retake:"Retake quiz", question:"Question", of:"of", next:"Next", prev:"Back", seeResult:"See result", chooseFirst:"Choose an answer first", review:"Review answers", yourAnswer:"Your answer", correctAnswer:"Correct answer", retryQuiz:"Retry", backToChapter:"Back to chapter", pctSign:"%", correct:"Correct!", book:"Course book", review:"Review", read:"Read", download:"Download", preparing:"Preparing…", pagesLabel:" pages", pageLabel:"Page", skip:"Skip to content", chaptersTab:"Chapters", lecturesTab:"Lectures", resources:"Resources", overall:"Overall", quizzesTaken:"Quizzes taken", avgScore:"Average score", listened:"Recordings completed", quizResults:"Quiz results", needsReview:"Needs review", continueListening:"Continue listening", resume:"Resume", stoppedAt:"Stopped at minute", resetProgress:"Reset my progress", resetConfirm:"Tap again to reset", progressEmpty:"Listen to a lecture or take a quiz, and your progress will show here.", lecturesDone:"lectures completed", reviewDoc:"Review", loadingBook:"Loading the book…", bookErr:"Couldn’t open the book here. Use Download instead.", wrongMsg:"Not quite", minsLabel:" min", emptyChapter:"Lessons for this chapter will appear here.", openMenu:"Open menu", closeMenu:"Close menu", nav:"Main menu",
-      nameLabel:"What’s your name?", namePh:"Your name", nameGo:"Continue", nameCancel:"Cancel", changeName:"Change name",
+      nameLabel:"What’s your name?", namePh:"Your name", nameGo:"Continue",
       nameErrShort:"Please insert your name to continue.", nameErrLong:"Please use 40 characters or fewer.", nameErrChars:"Please use Arabic or English letters only."
     },
     ar:{
@@ -423,7 +438,7 @@ body.no-scroll{overflow:hidden}
       exams:"الاختبارات", progress:"تقدّمي",
       greet:"السلام عليكم ورحمة الله", welcome:"أهلًا بك في معهد الفضيلة",
       empty:"لا يوجد محتوى بعد.", chaptersN:" أبواب", lecturesN:" محاضرات", chapter:"باب", soon:"قريبًا", recording:"تسجيل الدرس", part:"الجزء", loading:"جارٍ التحميل…", loadErr:"تعذّر التحميل", retry:"إعادة المحاولة", chapterQuiz:"اختبار الباب", best:"أفضل نتيجة", startQuiz:"ابدأ الاختبار", retake:"أعد الاختبار", question:"السؤال", of:"من", next:"التالي", prev:"السابق", seeResult:"عرض النتيجة", chooseFirst:"اختر إجابة أولًا", review:"مراجعة الإجابات", yourAnswer:"إجابتك", correctAnswer:"الإجابة الصحيحة", retryQuiz:"إعادة الاختبار", backToChapter:"العودة إلى الباب", pctSign:"٪", correct:"إجابة صحيحة!", book:"كتاب المادة", review:"مراجعة", read:"قراءة", download:"تحميل", preparing:"جارٍ التجهيز…", pagesLabel:" صفحة", pageLabel:"صفحة", skip:"تخطَّ إلى المحتوى", chaptersTab:"الأبواب", lecturesTab:"المحاضرات", resources:"المصادر", overall:"نظرة عامة", quizzesTaken:"اختبارات منجزة", avgScore:"متوسط النتائج", listened:"تسجيلات مكتملة", quizResults:"نتائج الاختبارات", needsReview:"تحتاج مراجعة", continueListening:"أكمل الاستماع", resume:"استئناف", stoppedAt:"توقفت عند الدقيقة", resetProgress:"مسح تقدّمي", resetConfirm:"اضغط مرة أخرى للمسح", progressEmpty:"استمع إلى محاضرة أو أجرِ اختبارًا، وسيظهر تقدّمك هنا.", lecturesDone:"محاضرات مكتملة", reviewDoc:"مراجعة", loadingBook:"جارٍ تحميل الكتاب…", bookErr:"تعذّر فتح الكتاب هنا. استخدم زر التحميل.", wrongMsg:"إجابة خاطئة", minsLabel:" دقيقة", emptyChapter:"ستظهر دروس هذا الباب هنا.", openMenu:"فتح القائمة", closeMenu:"إغلاق القائمة", nav:"القائمة الرئيسية",
-      nameLabel:"ما اسمك؟", namePh:"اسمك", nameGo:"متابعة", nameCancel:"إلغاء", changeName:"تغيير الاسم",
+      nameLabel:"ما اسمك؟", namePh:"اسمك", nameGo:"متابعة",
       nameErrShort:"من فضلك أدخل اسمك للمتابعة.", nameErrLong:"من فضلك لا تتجاوز ٤٠ حرفًا.", nameErrChars:"من فضلك استخدم حروفًا عربية أو إنجليزية فقط."
     }
   };
@@ -597,6 +612,8 @@ body.no-scroll{overflow:hidden}
       b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
     });
     var ni = document.getElementById("nameInput"); if (ni) ni.placeholder = t.namePh;
+    updateNameUI();
+    mp(function(m){ m.register({"App Language": lang}); });
   }
   function render(){
     var t = T[lang];
@@ -626,7 +643,9 @@ body.no-scroll{overflow:hidden}
     } else if (key === "progress"){
       renderProgress(t);
     } else if (key === "home"){
-      main.innerHTML = '<section class="greeting"><h1>' + t.greet + '</h1><div class="rule"></div><p>' + t.welcome + '</p></section>';
+      var sn = getStudentName();
+      var chip = sn ? '<span class="name-chip"><span class="av" aria-hidden="true">' + escName(nameInitial(sn)) + '</span><span class="nm">' + escName(sn) + '</span></span>' : '';
+      main.innerHTML = '<section class="greeting">' + chip + '<h1>' + t.greet + '</h1><div class="rule"></div><p>' + t.welcome + '</p></section>';
     } else if (SUBJ[key]){
       var S = SUBJ[key];
       var rows = S.items.map(function(c, i){
@@ -1007,7 +1026,49 @@ body.no-scroll{overflow:hidden}
     student.name = localStorage.getItem(NAME_KEY) || "";
   } catch(e){}
   function getStudentName(){ return student.name; }
-  function setStudentName(n){ student.name = n; try { localStorage.setItem(NAME_KEY, n); } catch(e){} }
+  function setStudentName(n){ student.name = n; try { localStorage.setItem(NAME_KEY, n); } catch(e){} setProfileName(n); }
+
+  // ---- Mixpanel. Every call is wrapped so a blocked/failed Mixpanel never breaks the app. ----
+  // Identity = Mixpanel's random device ID. Never identify() with the name (names aren't unique).
+  function mp(fn){ try { if (window.mixpanel) fn(window.mixpanel); } catch(e){} }
+  // Run fn once the real Mixpanel library has loaded (never runs if Mixpanel is blocked).
+  function mpLoaded(fn){ mp(function(m){ if (m.__loaded) fn(m); else (window.__mpOnLoad = window.__mpOnLoad || []).push(fn); }); }
+  // Profile updates need identify() first; we identify with Mixpanel's own random device ID (never the name),
+  // then set the name as a display label only.
+  function setProfileName(n){
+    if (!n) return;
+    mpLoaded(function(m){
+      var dev = m.get_property("$device_id");
+      if (dev) m.identify(dev); // same ID every visit; re-calling is safe and lets people.set send
+      m.people.set({"$name": n});
+    });
+  }
+  function pageProps(){
+    var key = location.hash.replace("#", "");
+    var m = /^(fiqh|quran|aqida)-(\d+)(-quiz)?$/.exec(key);
+    if (m){
+      var c = SUBJ[m[1]].items[+m[2]-1];
+      if (c && !c.soon) return {"Page": (m[3] && c.quiz) ? "quiz" : "lecture", "Subject": T.en[m[1]], "Lecture": c.en};
+      key = m[1];
+    }
+    if (DOCS[key]) return {"Page": "reader", "Subject": T.en[DOCS[key].subj]};
+    if (SUBJ[key]) return {"Page": "subject", "Subject": T.en[key]};
+    if (key === "home" || views.indexOf(key) < 0) return {"Page": "home"};
+    return {"Page": key};
+  }
+  function trackPageView(){ mp(function(m){ m.track("Page Viewed", pageProps()); }); }
+  function escName(s){ return String(s).replace(/[&<>"']/g, function(c){ return "&#" + c.charCodeAt(0) + ";"; }); }
+  function nameInitial(n){ var m = /[A-Za-zء-غف-يٱ-ۓ]/.exec(n); return m ? m[0].toUpperCase() : ""; }
+  // Menu chip: shows the saved name (display only).
+  function updateNameUI(){
+    var chip = document.getElementById("menuName"), brand = document.querySelector(".sidebar-head .brand");
+    var n = getStudentName();
+    chip.hidden = !n; brand.hidden = !!n;
+    if (!n) return;
+    chip.querySelector(".av").textContent = nameInitial(n);
+    chip.querySelector(".nm").textContent = n;
+    chip.title = n;
+  }
 
   var NAME_LETTERS = "A-Za-zء-غـ-ْٰ-ۓۺ-ۼ";
   var NAME_RE = new RegExp("^[" + NAME_LETTERS + "]+( [" + NAME_LETTERS + "]+)*$");
@@ -1023,19 +1084,14 @@ body.no-scroll{overflow:hidden}
   var nameForm = document.getElementById("nameForm");
   var nameInput = document.getElementById("nameInput");
   var nameErr = document.getElementById("nameErr");
-  var nameCancel = document.getElementById("nameCancel");
-  var changeNameBtn = document.getElementById("changeName");
   var nameBehind = [document.querySelector("[data-skip]"), document.querySelector(".topbar"), sidebar, scrim, main];
-  var nameIsChange = false;
 
   function showNameError(key){
     if (key){ nameErr.dataset.t = key; nameErr.textContent = T[lang][key]; nameInput.setAttribute("aria-invalid", "true"); }
     else { delete nameErr.dataset.t; nameErr.textContent = ""; nameInput.removeAttribute("aria-invalid"); }
   }
-  function openNameScreen(isChange){
-    nameIsChange = !!isChange;
-    nameCancel.hidden = !nameIsChange;
-    nameInput.value = nameIsChange ? getStudentName() : "";
+  function openNameScreen(){
+    nameInput.value = "";
     showNameError("");
     nameBehind.forEach(function(el){ if (el) el.setAttribute("inert", ""); });
     document.body.classList.add("no-scroll");
@@ -1046,7 +1102,7 @@ body.no-scroll{overflow:hidden}
     nameScreen.hidden = true;
     nameBehind.forEach(function(el){ if (el) el.removeAttribute("inert"); });
     document.body.classList.remove("no-scroll");
-    (nameIsChange ? openBtn : main).focus();
+    main.focus();
   }
   nameForm.addEventListener("submit", function(e){
     e.preventDefault();
@@ -1054,16 +1110,16 @@ body.no-scroll{overflow:hidden}
     var err = nameError(n);
     if (err){ showNameError(err); nameInput.focus(); return; }
     setStudentName(n);
+    updateNameUI(); render();
     closeNameScreen();
   });
   nameInput.addEventListener("input", function(){ if (nameErr.textContent && !nameError(cleanName(nameInput.value))) showNameError(""); });
-  nameCancel.addEventListener("click", closeNameScreen);
-  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !nameScreen.hidden && nameIsChange) closeNameScreen(); });
-  changeNameBtn.hidden = !student.canSave;
-  changeNameBtn.addEventListener("click", function(){ closeMenu(); openNameScreen(true); });
 
+  window.addEventListener("hashchange", trackPageView);
   applyLang(); render();
-  if (student.canSave && !getStudentName()) openNameScreen(false);
+  setProfileName(getStudentName());
+  trackPageView();
+  if (student.canSave && !getStudentName()) openNameScreen();
 })();
 </script>
 </body>

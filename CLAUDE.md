@@ -32,7 +32,7 @@ Hosted on GitHub Pages. No build step, no backend.
 - PDFs go in `media/` and get an entry in `DOCS` + the subject's `docs` list.
 
 ## Check before pushing
-- Open `index.html` via a local server (`python3 -m http.server`) and test: menu, both languages, a recording, a quiz, the PDF reader, mobile width (~390px).
+- Open `index.html` via a local server that supports seeking in recordings (`npx --yes http-server -p 8000 -c-1`, then http://localhost:8000; `python3 -m http.server` can't seek audio) and test: menu, both languages, a recording, a quiz, the PDF reader, mobile width (~390px).
 - Accessibility: tap targets ≥ 44px on mobile, visible focus, contrast ≥ 4.5:1.
 
 ## Deploy
