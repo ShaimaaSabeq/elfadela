@@ -86,7 +86,6 @@ button{font:inherit;color:inherit}
 .nav .nav-btn{border:0;background:none;font:inherit;font-size:16px;text-align:start;cursor:pointer;min-height:44px;line-height:1.35}
 .nav .nav-btn:hover{background:var(--primary-soft)}
 .nav .nav-btn span{min-width:0;overflow-wrap:anywhere}
-.nav .nav-contact{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
 .nav a:hover{background:var(--primary-soft)}
 .nav a[aria-current="page"]{background:var(--primary-soft);color:var(--primary);font-weight:600}
 .nav svg{flex:none}
@@ -132,6 +131,11 @@ main{padding:32px 20px;max-width:880px}
 [dir="rtl"] .flip{transform:scaleX(-1)}
 .crumb{display:inline-flex;align-items:center;gap:6px;color:var(--primary);text-decoration:none;font-size:15px;margin-bottom:12px}
 .crumb:hover{text-decoration:underline}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;margin:0 0 10px;padding:0;list-style:none;font-size:15px;color:var(--muted)}
+.crumbs li{display:flex;align-items:center;gap:8px}
+.crumbs li + li::before{content:"/";color:var(--muted)}
+.crumbs a{display:inline-flex;align-items:center;min-height:44px;color:var(--primary);text-decoration:none;font-weight:600}
+.crumbs a:hover{text-decoration:underline}
 .rec-list{display:grid;gap:12px}
 .rec-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
 .rec-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
@@ -456,10 +460,7 @@ body.no-scroll{overflow:hidden}
     <li><a href="#fiqh" data-view="fiqh"><span class="dot"></span><span data-t="fiqh"></span></a></li>
     <li><a href="#aqida" data-view="aqida"><span class="dot"></span><span data-t="aqida"></span></a></li>
     <li><a href="#quran" data-view="quran"><span class="dot"></span><span data-t="quran"></span></a></li>
-    <li class="section-label" data-t="study"></li>
-    <li><a href="#exams" data-view="exams">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg>
-      <span data-t="exams"></span><span class="badge nav-soon" data-t="soon"></span></a></li>
+    <li class="section-label" data-t="contactSec"></li>
     <li class="nav-contact"><button type="button" class="nav-btn" id="openContact" aria-haspopup="dialog">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z"/><path d="M9 10h6M9 13.5h4"/></svg>
       <span data-t="contactNav"></span></button></li>
@@ -512,11 +513,11 @@ body.no-scroll{overflow:hidden}
 (function(){
   var T = {
     en:{
-      appName:"Elfadela Institute", home:"Home", subjects:"Subjects", study:"Study",
+      appName:"Elfadela Institute", home:"Home", subjects:"Subjects", study:"Study", contactSec:"Contact",
       fiqh:"Fiqh", aqida:"Aqida", quran:"Quranic Sciences", hadith:"Hadith",
       exams:"Exams", progress:"My progress", quizN:" quizzes", quiz1:"1 quiz",
       contactNav:"Suggestions & reports", contactSub:"Choose one and WhatsApp will open with a ready message",
-      contactIssue:"Issue", contactIdea:"Suggestion", contactFile:"File or link", contactFoot:"I’ll see your WhatsApp number", contactClose:"Close",
+      contactIssue:"Issue", contactIdea:"Suggestion", contactFile:"Upload file", crumbsLabel:"Breadcrumb", waFileMsg:"I want to upload a file to the site.", contactFoot:"I’ll see your WhatsApp number", contactClose:"Close",
       waHello:"Assalamu alaikum", waFrom:"from the Elfadela Institute site", waIm:"I’m",
       greet:"Assalamu alaikum", welcome:"Welcome to Elfadela Institute",
       empty:"No content yet.", chaptersN:" chapters", lecturesN:" lectures", chapter:"Chapter on", soon:"Coming soon", recording:"Lesson recording", part:"Part", loading:"Loading…", loadErr:"Couldn’t load", retry:"Try again", chapterQuiz:"Chapter quiz", best:"Best score", startQuiz:"Start quiz", retake:"Retake quiz", question:"Question", of:"of", next:"Next", prev:"Back", seeResult:"See result", chooseFirst:"Choose an answer first", review:"Review answers", yourAnswer:"Your answer", correctAnswer:"Correct answer", retryQuiz:"Retry", backToChapter:"Back to chapter", pctSign:"%", correct:"Correct!", book:"Course book", review:"Review", read:"Read", download:"Download", preparing:"Preparing…", pagesLabel:" pages", pageLabel:"Page", skip:"Skip to content", chaptersTab:"Chapters", lecturesTab:"Lectures", resources:"Resources", overall:"Overall", quizzesTaken:"Quizzes taken", avgScore:"Average score", listened:"Recordings completed", quizResults:"Quiz results", needsReview:"Needs review", continueListening:"Continue listening", resume:"Resume", stoppedAt:"Stopped at minute", resetProgress:"Reset my progress", resetConfirm:"Tap again to reset", progressEmpty:"Listen to a lecture or take a quiz, and your progress will show here.", lecturesDone:"lectures completed", reviewDoc:"Review", loadingBook:"Loading the book…", bookErr:"Couldn’t open the book here. Use Download instead.", wrongMsg:"Not quite", minsLabel:" min", emptyChapter:"Lessons for this chapter will appear here.", openMenu:"Open menu", closeMenu:"Close menu", nav:"Main menu",
@@ -524,11 +525,11 @@ body.no-scroll{overflow:hidden}
       nameErrShort:"Please insert your name to continue.", nameErrLong:"Please use 40 characters or fewer.", nameErrChars:"Please use Arabic or English letters only."
     },
     ar:{
-      appName:"معهد الفضيلة", home:"الرئيسية", subjects:"المواد", study:"الدراسة",
+      appName:"معهد الفضيلة", home:"الرئيسية", subjects:"المواد", study:"الدراسة", contactSec:"تواصل",
       fiqh:"الفقه", aqida:"العقيدة", quran:"علوم القران", hadith:"الحديث",
       exams:"الاختبارات", progress:"تقدّمي", quizN:" اختبارات", quiz1:"اختبار واحد",
       contactNav:"اقتراحات وبلاغات", contactSub:"اختر، وسيفتح واتساب برسالة جاهزة",
-      contactIssue:"مشكلة", contactIdea:"اقتراح", contactFile:"ملف أو رابط", contactFoot:"سيظهر لي رقمك على واتساب", contactClose:"إغلاق",
+      contactIssue:"مشكلة", contactIdea:"اقتراح", contactFile:"رفع ملف", crumbsLabel:"مسار التنقل", waFileMsg:"أريد رفع ملف على الموقع.", contactFoot:"سيظهر لي رقمك على واتساب", contactClose:"إغلاق",
       waHello:"السلام عليكم", waFrom:"من موقع معهد الفضيلة", waIm:"أنا",
       greet:"السلام عليكم ورحمة الله", welcome:"أهلًا بك في معهد الفضيلة",
       empty:"لا يوجد محتوى بعد.", chaptersN:" أبواب", lecturesN:" محاضرات", chapter:"باب", soon:"قريبًا", recording:"تسجيل الدرس", part:"الجزء", loading:"جارٍ التحميل…", loadErr:"تعذّر التحميل", retry:"إعادة المحاولة", chapterQuiz:"اختبار الباب", best:"أفضل نتيجة", startQuiz:"ابدأ الاختبار", retake:"أعد الاختبار", question:"السؤال", of:"من", next:"التالي", prev:"السابق", seeResult:"عرض النتيجة", chooseFirst:"اختر إجابة أولًا", review:"مراجعة الإجابات", yourAnswer:"إجابتك", correctAnswer:"الإجابة الصحيحة", retryQuiz:"إعادة الاختبار", backToChapter:"العودة إلى الباب", pctSign:"٪", correct:"إجابة صحيحة!", book:"كتاب المادة", review:"مراجعة", read:"قراءة", download:"تحميل", preparing:"جارٍ التجهيز…", pagesLabel:" صفحة", pageLabel:"صفحة", skip:"تخطَّ إلى المحتوى", chaptersTab:"الأبواب", lecturesTab:"المحاضرات", resources:"المصادر", overall:"نظرة عامة", quizzesTaken:"اختبارات منجزة", avgScore:"متوسط النتائج", listened:"تسجيلات مكتملة", quizResults:"نتائج الاختبارات", needsReview:"تحتاج مراجعة", continueListening:"أكمل الاستماع", resume:"استئناف", stoppedAt:"توقفت عند الدقيقة", resetProgress:"مسح تقدّمي", resetConfirm:"اضغط مرة أخرى للمسح", progressEmpty:"استمع إلى محاضرة أو أجرِ اختبارًا، وسيظهر تقدّمك هنا.", lecturesDone:"محاضرات مكتملة", reviewDoc:"مراجعة", loadingBook:"جارٍ تحميل الكتاب…", bookErr:"تعذّر فتح الكتاب هنا. استخدم زر التحميل.", wrongMsg:"إجابة خاطئة", minsLabel:" دقيقة", emptyChapter:"ستظهر دروس هذا الباب هنا.", openMenu:"فتح القائمة", closeMenu:"إغلاق القائمة", nav:"القائمة الرئيسية",
@@ -649,6 +650,54 @@ body.no-scroll{overflow:hidden}
     {q:"يجوز إطالة الأظافر تبعا للسنة", o:TF, a:1},
     {q:"الختان", o:["حرام","واجب ومكرمة","مباح"], a:1}
   ];
+  var wuduQuiz = [
+    {q:"سقوط النجاسة على جسدالانسان تنقض الوضوء", o:TF, a:1},
+    {q:"خروج ريح من القبل تنقض الوضوء", o:TF, a:1},
+    {q:"اذا شك او تخيل خروج ريح عليه إعادة الوضوء فى المجمل", o:TF, a:1},
+    {q:"خروج البول من غير مكانه ينقض الوضوء", o:TF, a:0},
+    {q:"سنن الوضوء", o:["البسملة","السواك والتيامن","غسل الكفين اول الوضوء","دلك الأعضاء والتثليث","كل ماسبق"], a:4},
+    {q:"القهقهة تبطل الوضوء والصلاة", o:TF, a:1},
+    {q:"الافرازات اليومية للمرأة توجب الوضوء او الغسل", o:TF, a:1},
+    {q:"لمس الرجل للمرأة باليد ينقض الوضوء", o:TF, a:1},
+    {q:"يجوز لبس الخمار متعمدا للمسح عليه", o:["خطأ","صح"], a:1},
+    {q:"اذا كان الشعر كثيف يجب أن يصل الماء للجلد  فى الوضوء", o:TF, a:1},
+    {q:"يجب مسح المسترسل من الشعر", o:TF, a:1},
+    {q:"الموالاه تكون", o:["بين الوضوء والصلاة","بين اعضاء الوضوء"], a:1},
+    {q:"وجود الحناء  والصبغة على الشعر...", o:["يبطل الوضوء","يصح معهم الوضوء"], a:1},
+    {q:"من صلى بغير وضوء ناسيا", o:["عليه إعادة  الصلاة","ليس عليه إعادة"], a:0},
+    {q:"نزول دم من جرح لاينقض الوضوء", o:TF, a:0},
+    {q:"من حمل ميت يجب له الوضوء", o:TF, a:1},
+    {q:"يجب الوضوء", o:["للصلاه","للطواف مختلف فيه","كل ماسبق"], a:2},
+    {q:"لمس فرج الصغير لاينقص الوضوء", o:TF, a:0},
+    {q:"المراد باللمس الذى ينقض الوضوء", o:["السلام","الاختلاط","الجماع"], a:2},
+    {q:"مس الفرج ينقض الوضوء بدون حائل", o:TF, a:0},
+    {q:"ينقض الوضوء", o:["مبادى النوم المتقطع","النوم الذى يغيب فيه الإدراك"], a:1},
+    {q:"زوال العقل او الإغماء ينقض الوضوء", o:TF, a:0},
+    {q:"ينقض الوضوء ماخرج من السبلين", o:["صح .","خطأ"], a:0},
+    {q:"الودي والمذى", o:["من النجاسات","نواقض وضوء","كل ما سبق"], a:2},
+    {q:"من قص شعره اوقلم اظفاره  بعد الوضوء عليه إعادة الوضوء", o:TF, a:1},
+    {q:"الوضوء المستحب", o:["قبل النوم","للجنب اذا اراد النوم والاكل","لذكر الله","١&٣","كل ماسبق"], a:4},
+    {q:"يجوز سلام الرجل على المرأة لانه لاينقض الوضوء", o:TF, a:1},
+    {q:"القئ والترجيع ينقض الوضوء", o:TF, a:1}
+  ];
+  var mashQuiz = [
+    {q:"لبس الجورب على طهاره ومسح عليه ثم لبس جورب اخر فوقه ثم مسح عليه هل الوضوء صحيح", o:["نعم","لا"], a:1},
+    {q:"المشروع في المسح على الخفين", o:["١- ان يمسح على ظاهرهما","٢- ان يمسح باطنهما","٣- ٢،١ معا"], a:0},
+    {q:"مدة المسح للمقيم", o:["١- يوم وليلة","٢- يومان","٣- ثلاثة ايام بلياليها"], a:0},
+    {q:"مدة المسح للمسافر", o:["١- يوم بليلة","٢- يومان","٣- ثلاثة ايام بلياليها"], a:2},
+    {q:"يجوز المسح على الخفين او الجوربين", o:TF, a:0},
+    {q:"لايجوز المسح على اللفائف", o:TF, a:1},
+    {q:"لايشترط في المسح على الخفين ان يلبسهما على طهارة", o:TF, a:1},
+    {q:"من شروط المسح على الخفين", o:["ان يلبسهما على طهارة","لايشترط لبسهما على طهارة","لاشيء مماسبق"], a:0},
+    {q:"لايجوز المسح على الخفين اذا كان بهما خرق صغير او كبير", o:TF, a:1},
+    {q:"اذا خلع الخفين اثناء المدة وكان لم يحدث فينتقض وضوءه", o:TF, a:1},
+    {q:"الراجح في ابتداء مدة المسح", o:["١- تبدأ من بداية المسح بعد الحدث","٢- تبدأ من بمجرد الحدث بعد لبس الخفين","٣- ١ ، ٢ معا"], a:0},
+    {q:"هل لو انتهت مدة المسح وكان متوضئا ولم ينقض وضوؤه هل يعد انقضاء المدة ناقضا للوضوء ؟", o:["نعم","لا"], a:1},
+    {q:"يبطل المسح على الخفين بسبب الجنابة", o:TF, a:0},
+    {q:"يجوز لبس الخف والمسح عليه لمن لا يحتاج اليه", o:TF, a:0},
+    {q:"لا مانع من لبس خفين او جوربين يلبسهما جميعا بعد الطهارة الكاملة ويكون المسح على الجورب او الخف الاعلى", o:TF, a:0},
+    {q:"عدم جواز المسح على الجوارب الشفافة التي تظهر لون البشرة", o:TF, a:0}
+  ];
   var fiqhChapters = [
     {ar:"المقدمة", en:"Introduction", plain:true, recs:[{src:"media/fiqh-intro.mp4", mins:37}]},
     {ar:"المياه", en:"Waters", recs:[{src:"media/fiqh-01-waters.mp4", mins:43}], quiz:watersQuiz},
@@ -657,9 +706,9 @@ body.no-scroll{overflow:hidden}
     {ar:"الآنية", en:"Vessels", recs:[{src:"media/fiqh-aniya.mp4", mins:16}], quiz:aniyaQuiz},
     {ar:"قضاء الحاجة", en:"Relieving oneself", recs:[{src:"media/fiqh-qada.mp4", mins:11}], quiz:qadaQuiz},
     {ar:"سنن الفطرة", en:"Sunan al-Fitrah", recs:[{src:"media/fiqh-fitra.mp4", mins:24}], quiz:fitraQuiz},
-    {ar:"الوضوء", en:"Wudu", recs:[{src:"media/fiqh-wudu-1.mp4", mins:34},{src:"media/fiqh-wudu-2.mp4", mins:31}]},
-    {ar:"المسح على الخفين", en:"Wiping over the khuffs", recs:[{src:"media/fiqh-mash.mp4", mins:24}]},
-    {ar:"الغسل", en:"Ghusl", soon:true},
+    {ar:"الوضوء", en:"Wudu", recs:[{src:"media/fiqh-wudu-1.mp4", mins:34},{src:"media/fiqh-wudu-2.mp4", mins:31}], quiz:wuduQuiz},
+    {ar:"المسح على الخفين", en:"Wiping over the khuffs", recs:[{src:"media/fiqh-mash.mp4", mins:24}], quiz:mashQuiz},
+    {ar:"الغسل", en:"Ghusl", recs:[{src:"media/fiqh-ghusl.mp4", mins:22}]},
     {ar:"التيمم", en:"Tayammum", soon:true},
     {ar:"المسح على الجبيرة", en:"Wiping over a splint", soon:true}
   ];
@@ -753,7 +802,8 @@ body.no-scroll{overflow:hidden}
       var tabs = docs.length ? '<div class="seg" role="tablist"><button type="button" role="tab" data-tab="list" aria-selected="' + (tab === "list") + '">' + t.lecturesTab + '</button><button type="button" role="tab" data-tab="res" aria-selected="' + (tab === "res") + '">' + t.resources + ' (' + num(docs.length) + ')</button></div>' : '';
       var body0 = (tab === "res" && docs.length) ? '<div class="res-list">' + docs.map(function(d){ return bookCard(t, d); }).join('') + '</div>' : '<ul class="chapters">' + rows + '</ul>';
       var body = docs.length ? '<div role="tabpanel" aria-label="' + (tab === "res" ? t.resources : t.lecturesTab) + '">' + body0 + '</div>' : body0;
-      main.innerHTML = '<section class="page-head"><h1>' + t[key] + '</h1><p>' + (S.total ? num(S.total) + t.lecturesN : num(S.items.length) + t.chaptersN) + '</p><div class="rule"></div></section>' + tabs + body;
+      main.innerHTML = '<nav aria-label="' + t.crumbsLabel + '"><ol class="crumbs"><li><a href="#home">' + t.home + '</a></li><li aria-current="page">' + t[key] + '</li></ol></nav>' +
+        '<section class="page-head"><h1>' + t[key] + '</h1><p>' + (S.total ? num(S.total) + t.lecturesN : num(S.items.length) + t.chaptersN) + '</p><div class="rule"></div></section>' + tabs + body;
     } else {
       main.innerHTML = '<section class="empty"><h1>' + t[key] + '</h1><p>' + t.empty + '</p></section>';
     }
@@ -1267,7 +1317,8 @@ body.no-scroll{overflow:hidden}
   function openContact(){
     // Each tile opens WhatsApp with the same greeting + the chosen type on its own line.
     contactDlg.querySelectorAll(".ct-tile").forEach(function(a){
-      a.href = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(waMessage() + T[lang][a.dataset.kind] + ": ");
+      var line = a.dataset.kind === "contactFile" ? T[lang].waFileMsg : T[lang][a.dataset.kind] + ": ";
+      a.href = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(waMessage() + line);
     });
     document.getElementById("contactClose").setAttribute("aria-label", T[lang].contactClose);
     closeMenu();
