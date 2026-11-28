@@ -129,13 +129,14 @@ main{padding:32px 20px;max-width:880px}
 .ch-title{flex:1;font-weight:500;font-size:17px}
 .chev{color:var(--muted);flex:none}
 [dir="rtl"] .flip{transform:scaleX(-1)}
-.crumb{display:inline-flex;align-items:center;gap:6px;color:var(--primary);text-decoration:none;font-size:15px;margin-bottom:12px}
-.crumb:hover{text-decoration:underline}
 .subj-head{display:flex;align-items:center;gap:12px;margin:0 0 18px}
 .subj-head .back{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);color:var(--primary);text-decoration:none}
 .subj-head .back:hover{border-color:var(--primary);background:var(--primary-soft)}
 [dir="rtl"] .subj-head .back svg{transform:scaleX(-1)}
-.subj-head h1{font-family:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;font-weight:500;font-size:28px;line-height:1.3;margin:0;color:var(--primary);min-width:0}
+.subj-head .ttl{min-width:0}
+.subj-head h1{font-family:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;font-weight:500;font-size:28px;line-height:1.3;margin:0;color:var(--primary)}
+.subj-head.long h1{font-size:22px}
+.subj-head .sub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:1.4}
 .subj-head .cnt{flex:none;margin-inline-start:auto;background:var(--primary-soft);color:var(--primary);border-radius:999px;padding:3px 12px;font-size:14px;font-weight:600;white-space:nowrap}
 .rec-list{display:grid;gap:12px}
 .rec-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px 20px}
@@ -306,7 +307,6 @@ main{padding:32px 20px;max-width:880px}
   .btn,.btn.sm{min-height:44px}
   .seg button{min-height:44px}
   .lang-switch button{min-height:40px}
-  .crumb{min-height:44px;margin-bottom:4px}
   .icon-btn{width:44px;height:44px}
   main{padding:24px 16px}
   .page-head h1{font-size:26px}
@@ -518,7 +518,7 @@ body.no-scroll{overflow:hidden}
       fiqh:"Fiqh", aqida:"Aqida", quran:"Quranic Sciences", hadith:"Hadith",
       exams:"Exams", progress:"My progress", quizN:" quizzes", quiz1:"1 quiz",
       contactNav:"Suggestions & reports", contactSub:"Choose one and WhatsApp will open with a ready message",
-      contactIssue:"Issue", contactIdea:"Suggestion", contactFile:"Upload file", backHome:"Back to Home", waFileMsg:"I want to upload a file to the site.", contactFoot:"I’ll see your WhatsApp number", contactClose:"Close",
+      contactIssue:"Issue", contactIdea:"Suggestion", contactFile:"Upload file", backTo:"Back to ", waFileMsg:"I want to upload a file to the site.", contactFoot:"I’ll see your WhatsApp number", contactClose:"Close",
       waHello:"Assalamu alaikum", waFrom:"from the Elfadela Institute site", waIm:"I’m",
       greet:"Assalamu alaikum", welcome:"Welcome to Elfadela Institute",
       empty:"No content yet.", chaptersN:" chapters", lecturesN:" lectures", chapter:"Chapter on", soon:"Coming soon", recording:"Lesson recording", part:"Part", loading:"Loading…", loadErr:"Couldn’t load", retry:"Try again", chapterQuiz:"Chapter quiz", best:"Best score", startQuiz:"Start quiz", retake:"Retake quiz", question:"Question", of:"of", next:"Next", prev:"Back", seeResult:"See result", chooseFirst:"Choose an answer first", review:"Review answers", yourAnswer:"Your answer", correctAnswer:"Correct answer", retryQuiz:"Retry", backToChapter:"Back to chapter", pctSign:"%", correct:"Correct!", book:"Course book", review:"Review", read:"Read", download:"Download", preparing:"Preparing…", pagesLabel:" pages", pageLabel:"Page", skip:"Skip to content", chaptersTab:"Chapters", lecturesTab:"Lectures", resources:"Resources", overall:"Overall", quizzesTaken:"Quizzes taken", avgScore:"Average score", listened:"Recordings completed", quizResults:"Quiz results", needsReview:"Needs review", continueListening:"Continue listening", resume:"Resume", stoppedAt:"Stopped at minute", resetProgress:"Reset my progress", resetConfirm:"Tap again to reset", progressEmpty:"Listen to a lecture or take a quiz, and your progress will show here.", lecturesDone:"lectures completed", reviewDoc:"Review", loadingBook:"Loading the book…", bookErr:"Couldn’t open the book here. Use Download instead.", wrongMsg:"Not quite", minsLabel:" min", emptyChapter:"Lessons for this chapter will appear here.", openMenu:"Open menu", closeMenu:"Close menu", nav:"Main menu",
@@ -530,7 +530,7 @@ body.no-scroll{overflow:hidden}
       fiqh:"الفقه", aqida:"العقيدة", quran:"علوم القران", hadith:"الحديث",
       exams:"الاختبارات", progress:"تقدّمي", quizN:" اختبارات", quiz1:"اختبار واحد",
       contactNav:"اقتراحات وبلاغات", contactSub:"اختر، وسيفتح واتساب برسالة جاهزة",
-      contactIssue:"مشكلة", contactIdea:"اقتراح", contactFile:"رفع ملف", backHome:"العودة إلى الرئيسية", waFileMsg:"أريد رفع ملف على الموقع.", contactFoot:"سيظهر لي رقمك على واتساب", contactClose:"إغلاق",
+      contactIssue:"مشكلة", contactIdea:"اقتراح", contactFile:"رفع ملف", backTo:"العودة إلى ", waFileMsg:"أريد رفع ملف على الموقع.", contactFoot:"سيظهر لي رقمك على واتساب", contactClose:"إغلاق",
       waHello:"السلام عليكم", waFrom:"من موقع معهد الفضيلة", waIm:"أنا",
       greet:"السلام عليكم ورحمة الله", welcome:"أهلًا بك في معهد الفضيلة",
       empty:"لا يوجد محتوى بعد.", chaptersN:" أبواب", lecturesN:" محاضرات", chapter:"باب", soon:"قريبًا", recording:"تسجيل الدرس", part:"الجزء", loading:"جارٍ التحميل…", loadErr:"تعذّر التحميل", retry:"إعادة المحاولة", chapterQuiz:"اختبار الباب", best:"أفضل نتيجة", startQuiz:"ابدأ الاختبار", retake:"أعد الاختبار", question:"السؤال", of:"من", next:"التالي", prev:"السابق", seeResult:"عرض النتيجة", chooseFirst:"اختر إجابة أولًا", review:"مراجعة الإجابات", yourAnswer:"إجابتك", correctAnswer:"الإجابة الصحيحة", retryQuiz:"إعادة الاختبار", backToChapter:"العودة إلى الباب", pctSign:"٪", correct:"إجابة صحيحة!", book:"كتاب المادة", review:"مراجعة", read:"قراءة", download:"تحميل", preparing:"جارٍ التجهيز…", pagesLabel:" صفحة", pageLabel:"صفحة", skip:"تخطَّ إلى المحتوى", chaptersTab:"الأبواب", lecturesTab:"المحاضرات", resources:"المصادر", overall:"نظرة عامة", quizzesTaken:"اختبارات منجزة", avgScore:"متوسط النتائج", listened:"تسجيلات مكتملة", quizResults:"نتائج الاختبارات", needsReview:"تحتاج مراجعة", continueListening:"أكمل الاستماع", resume:"استئناف", stoppedAt:"توقفت عند الدقيقة", resetProgress:"مسح تقدّمي", resetConfirm:"اضغط مرة أخرى للمسح", progressEmpty:"استمع إلى محاضرة أو أجرِ اختبارًا، وسيظهر تقدّمك هنا.", lecturesDone:"محاضرات مكتملة", reviewDoc:"مراجعة", loadingBook:"جارٍ تحميل الكتاب…", bookErr:"تعذّر فتح الكتاب هنا. استخدم زر التحميل.", wrongMsg:"إجابة خاطئة", minsLabel:" دقيقة", emptyChapter:"ستظهر دروس هذا الباب هنا.", openMenu:"فتح القائمة", closeMenu:"إغلاق القائمة", nav:"القائمة الرئيسية",
@@ -732,7 +732,6 @@ body.no-scroll{overflow:hidden}
   ];
   var SUBJ = {fiqh:{items:fiqhChapters, docs:["fiqh-book"]}, quran:{items:quranLectures, total:7, docs:["quran-book","quran-review"]}, aqida:{items:aqidaLectures, total:8, docs:["aqida-book","aqida-review"]}};
   var chevSvg = '<svg class="chev flip" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
-  var backSvg = '<svg class="flip" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>';
   function num(n){ return lang === "ar" ? n.toLocaleString("ar-EG") : String(n); }
   function label(c){ return c.plain ? c[lang] : T[lang].chapter + ' ' + c[lang]; }
   var lang = "ar";
@@ -776,8 +775,7 @@ body.no-scroll{overflow:hidden}
       renderQuiz(subj, ch, t);
     } else if (ch){
       var c = items[ch-1];
-      main.innerHTML = '<a class="crumb" href="#' + subj + '">' + backSvg + t[subj] + '</a>' +
-        '<section class="page-head"><h1>' + label(c) + '</h1><div class="rule"></div></section>' +
+      main.innerHTML = pageTop('#' + subj, t[subj], label(c), {pill: t[subj]}) +
         (c.recs && c.recs.length
           ? '<div class="rec-list">' + c.recs.map(function(r, i){
               var title = c.recs.length > 1 ? t.part + ' ' + num(i+1) : t.recording;
@@ -804,10 +802,9 @@ body.no-scroll{overflow:hidden}
       var body0 = (tab === "res" && docs.length) ? '<div class="res-list">' + docs.map(function(d){ return bookCard(t, d); }).join('') + '</div>' : '<ul class="chapters">' + rows + '</ul>';
       var body = docs.length ? '<div role="tabpanel" aria-label="' + (tab === "res" ? t.resources : t.lecturesTab) + '">' + body0 + '</div>' : body0;
       var openN = S.items.filter(function(c){ return !c.soon; }).length;
-      main.innerHTML = '<div class="subj-head"><a class="back" href="#home" aria-label="' + t.backHome + '"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>' +
-        '<h1>' + t[key] + '</h1><span class="cnt">' + (S.total ? num(S.total) + t.lecturesN : num(openN) + t.chaptersN) + '</span></div>' + tabs + body;
+      main.innerHTML = pageTop('#home', t.home, t[key], {pill: S.total ? num(S.total) + t.lecturesN : num(openN) + t.chaptersN}) + tabs + body;
     } else {
-      main.innerHTML = '<section class="empty"><h1>' + t[key] + '</h1><p>' + t.empty + '</p></section>';
+      main.innerHTML = pageTop('#home', t.home, t[key]) + '<section class="empty"><p>' + t.empty + '</p></section>';
     }
     document.querySelectorAll(".nav a").forEach(function(a){
       if (a.dataset.view === navKey) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current");
@@ -857,6 +854,14 @@ body.no-scroll{overflow:hidden}
     if (lang === "ar"){ if (n === 2) return "اختباران"; if (n > 10) return num(n) + " اختبارًا"; }
     return num(n) + t.quizN;
   }
+  // One header for every inner page: back button (one level up) + title (+ optional subline / pill).
+  function pageTop(href, backTo, title, opts){
+    opts = opts || {};
+    return '<div class="subj-head' + (opts.long ? ' long' : '') + '"><a class="back" href="' + href + '" aria-label="' + T[lang].backTo + backTo + '">' +
+      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></a>' +
+      '<div class="ttl"><h1>' + title + '</h1>' + (opts.sub ? '<p class="sub">' + opts.sub + '</p>' : '') + '</div>' +
+      (opts.pill ? '<span class="cnt">' + opts.pill + '</span>' : '') + '</div>';
+  }
   function homeSubjects(t){
     var icLec = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>';
     var icQz = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6v3H9z"/><path d="M9 4.5H6V21h12V4.5h-3"/><path d="M9 13l2 2 4-4"/></svg>';
@@ -898,7 +903,7 @@ body.no-scroll{overflow:hidden}
       mp(function(m){ m.track("Quiz Started", {"Subject": T.en[subj], "Chapter": c.en}); });
     }
     var s = quizState;
-    var head = '<a class="crumb" href="#' + subj + '-' + ch + '">' + backSvg + label(c) + '</a>';
+    var head = pageTop('#' + subj + '-' + ch, label(c), label(c), {pill: t.chapterQuiz});
     if (s.done){
       var score = 0; qs.forEach(function(q, i){ if (s.ans[i] === q.a) score++; });
       var pct = Math.round(score / qs.length * 100);
@@ -1028,8 +1033,7 @@ body.no-scroll{overflow:hidden}
   }
   function renderBook(t, key){
     var b = DOCS[key]; bookDoc = window.__bookDocs && window.__bookDocs[key] || null;
-    main.innerHTML = '<a class="crumb" href="#' + b.subj + '">' + backSvg + t[b.subj] + '</a>' +
-      '<section class="page-head"><h1 style="font-size:26px"><span dir="auto">' + b.title + '</span></h1><p><span dir="auto">' + (b.author || '') + '</span></p><div class="rule"></div></section>' +
+    main.innerHTML = pageTop('#' + b.subj, t[b.subj], '<span dir="auto">' + b.title + '</span>', {long: true, sub: b.author ? '<span dir="auto">' + b.author + '</span>' : ''}) +
       '<div class="reader-bar"><span>' + num(b.pages) + t.pagesLabel + '</span><button type="button" class="btn sm primary" data-dl="' + key + '">' + t.download + '</button></div>' +
       '<div class="pages" id="pages"><p class="reader-msg"><span class="spin" aria-hidden="true"></span>' + t.loadingBook + '</p></div>';
     var token = {}; renderBook.token = token;
@@ -1122,7 +1126,7 @@ body.no-scroll{overflow:hidden}
         (qrows ? '<h4 class="pg-sub">' + t.quizResults + '</h4><ul class="pg-list">' + qrows + '</ul>' : '') + '</section>';
     }).join("");
     var avg = qTaken ? Math.round(qSum / qTaken) : 0;
-    var html = '<section class="page-head"><h1>' + t.progress + '</h1><div class="rule"></div></section>';
+    var html = pageTop('#home', t.home, t.progress);
     if (!qTaken && !recs.some(function(r){ return lsGet("listen:" + r.src); })) html += '<p class="pg-empty">' + t.progressEmpty + '</p>';
     html += '<h2 class="pg-title">' + t.overall + '</h2><div class="pg-stats">' +
       '<div class="pg-stat"><b>' + num(qTaken) + '</b><span>' + t.quizzesTaken + '</span></div>' +
